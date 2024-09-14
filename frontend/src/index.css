@@ -1,0 +1,98 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f8f8;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root {
+  --occorange: #e98a34;
+}
+
+.search-box {
+  height: 100px;
+}
+
+.form-control {
+  height: 50px;
+  width: 700px;
+  border-radius: 10px 0px 0px 10px;
+  border: 1px black;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  padding-left: 50px;
+  font-size: 16px;
+}
+
+.main-header {
+  padding-top: 200px;
+}
+
+.bg-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1%;
+  font-size: 24px;
+  color: var(--occorange);
+  font-weight: bold;
+}
+.top-right:hover {
+  cursor: pointer;
+}
+
+.btn-primary,
+.btn-outline-primary {
+  background-color: var(--occorange);
+  color: black;
+  height: 55px;
+  width: 70px;
+  margin-left: auto;
+  border: 0;
+  padding-bottom: 2px;
+  border-radius: 0px 10px 10px 0px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.btn-outline-primary:hover {
+  filter: brightness(85%);
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+}
+
+.btn-standard {
+  background-color: var(--occorange);
+  color: black;
+  height: 100px;
+  width: 300px;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+  margin-left: 50px;
+}
+
+.center-box {
+  align-items: center;
+}
+.search-result {
+  font-size: 20px;
+}
+.last-item {
+  margin-bottom: 20px;
+}
