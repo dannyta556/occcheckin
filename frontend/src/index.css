@@ -30,11 +30,17 @@ code {
   padding-left: 50px;
   font-size: 16px;
 }
+.input-box {
+  height: 50px;
+  width: 400px;
+}
 
 .main-header {
   padding-top: 200px;
 }
-
+.pad-top-lg {
+  padding-top: 100px;
+}
 .bg-header {
   position: absolute;
   top: 0;
@@ -72,6 +78,13 @@ code {
   cursor: pointer;
 }
 
+.btn-export {
+  height: 50px;
+  width: 100px;
+  border: 0;
+  border-radius: 5px;
+}
+
 .error-message {
   color: red;
 }
@@ -93,6 +106,13 @@ code {
   margin: auto;
   width: 50%;
 }
+.center-content {
+  margin: auto;
+  width: 60%;
+}
+.align-item-right {
+  float: right;
+}
 .center-item {
   text-align: center;
 }
@@ -108,7 +128,9 @@ code {
 .last-item {
   margin-bottom: 20px;
 }
-
+.table-options {
+  width: 100%;
+}
 .dropdown {
   width: 200px;
   height: 50px;
@@ -116,4 +138,23 @@ code {
 }
 .field-item {
   margin: 10px;
+}
+
+.student-table {
+  width: 1400px;
+  border: 1px solid;
+}
+.student-table thead {
+  background-color: var(--occorange);
+}
+.student-table tbody td,
+.student-table tbody th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.student-table tbody {
+  width: 100%;
+}
+.student-table tbody tr:hover {
+  background-color: #ddd;
 }
