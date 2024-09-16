@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+
 export default function SuccessMessage({
   type,
   firstName,
@@ -18,23 +21,26 @@ export default function SuccessMessage({
   // 3 = Add Student success
   // 4 = Remove Student success
   return (
-    <div>
+    <div className="center-box">
       {type === 1 ? (
-        <div>
-          <div>Check in Success!</div>
-          <div>
-            {' '}
-            {firstName} {lastName} chcecked in at {time}
+        <div className="center-box">
+          <div className="center-box center-text success-text">
+            Check in Success!
+          </div>
+          <div className="center-box center-text success-text">
+            {firstName} {lastName} checked in at {time}
           </div>
         </div>
       ) : (
         <></>
       )}
       {type === 2 ? (
-        <div>
-          <div>Check out Success!</div>
-          <div>
-            {firstName} {lastName} chcecked out at {time}
+        <div className="center-box">
+          <div className="center-box center-text success-text">
+            Check out Success!
+          </div>
+          <div className="center-box center-text success-text">
+            {firstName} {lastName} checked out at {time}
           </div>
         </div>
       ) : (
@@ -42,11 +48,19 @@ export default function SuccessMessage({
       )}
       {type === 3 ? (
         <div>
-          <div>Add Student Success! </div>
-          <div>First Name: {firstName} </div>
-          <div>Last Name: {lastName} </div>
-          <div>Math Class: {mathLevel} </div>
-          <div>ID: {id} </div>
+          <div className="center-box center-text success-text">
+            Add Student Success!{' '}
+          </div>
+          <div className="center-box center-text success-text">
+            First Name: {firstName}{' '}
+          </div>
+          <div className="center-box center-text success-text">
+            Last Name: {lastName}{' '}
+          </div>
+          <div className="center-box center-text success-text">
+            Math Class: {mathLevel}{' '}
+          </div>
+          <div className="center-box center-text success-text">ID: {id} </div>
         </div>
       ) : (
         <></>
@@ -62,6 +76,11 @@ export default function SuccessMessage({
       ) : (
         <></>
       )}
+      <div className="center-item center-box-container">
+        <Link to="/">
+          <Button variant="standard">Home</Button>
+        </Link>
+      </div>
     </div>
   );
 }

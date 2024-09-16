@@ -2,7 +2,6 @@ import { Button, InputGroup } from 'react-bootstrap';
 import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
-import occlogo from '../images/occlogo.png';
 import SearchPage from '../components/SearchPage';
 
 function HomeScreen() {
@@ -22,9 +21,8 @@ function HomeScreen() {
   };
   return (
     <div className="App">
-      <SearchPage title="LRNG 051N Student Check-in" altpage="Admin" />
+      <SearchPage title="LRNG 051N Student Check-in" altpage="admin" />
       <div>
-        <img className="bg-header" src={occlogo} alt="occlogo" />
         <Form className="search-box" onSubmit={submitHandler}>
           <InputGroup>
             <FormControl

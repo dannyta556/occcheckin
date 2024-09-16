@@ -84,15 +84,36 @@ code {
   font-size: 24px;
   font-weight: bold;
   border-radius: 10px;
-  margin-left: 50px;
 }
-
+.success-text {
+  color: green;
+  font-size: 24px;
+}
 .center-box {
-  align-items: center;
+  margin: auto;
+  width: 50%;
+}
+.center-item {
+  text-align: center;
+}
+.center-text {
+  text-align: center;
+}
+.center-box-container {
+  margin-top: 50px;
 }
 .search-result {
   font-size: 20px;
 }
 .last-item {
   margin-bottom: 20px;
+}
+
+.dropdown {
+  width: 200px;
+  height: 50px;
+  text-align: center;
+}
+.field-item {
+  margin: 10px;
 }
