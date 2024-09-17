@@ -158,3 +158,11 @@ code {
 .student-table tbody tr:hover {
   background-color: #ddd;
 }
+
+.border-box {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 500px;
+  outline: 1px solid black;
+  padding: 20px;
+}

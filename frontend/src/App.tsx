@@ -8,6 +8,8 @@ import RemoveStudentScreen from './screens/RemoveStudentScreen';
 import ViewStudentsScreen from './screens/ViewStudentsScreen';
 import AddCourseScreen from './screens/AddCourse';
 import SuccessScreen from './screens/SuccessScreen';
+import StudentScreen from './screens/StudentScreen';
+import EditStudentScreen from './screens/EditStudentScreen';
 
 function App() {
   return (
@@ -20,6 +22,11 @@ function App() {
             <Route path="/success" element={<SuccessScreen />} />
             <Route path="/admin" element={<AdminScreen />} />
             <Route path="/admin/addStudent" element={<AddStudentScreen />} />
+            <Route path="/admin/student/:id" element={<StudentScreen />} />
+            <Route
+              path="/admin/editStudent/:id"
+              element={<EditStudentScreen />}
+            />
             <Route
               path="/admin/removeStudent"
               element={<RemoveStudentScreen />}

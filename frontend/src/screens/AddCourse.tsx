@@ -33,7 +33,7 @@ function AddCourseScreen() {
     <div className="center-box">
       <SearchPage title="Course List" altpage="admin" />
 
-      <ListGroup className="center-box">
+      <ListGroup className="center-box border-box">
         {courseList.map((course) => {
           return (
             <ListGroup.Item key={course} className="center-text">

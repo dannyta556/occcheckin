@@ -54,7 +54,7 @@ function ViewStudentsScreen() {
           <Button className="align-item-right btn-export">Export</Button>
         </div>
 
-        <Table className="student-table" striped bordered hover>
+        <Table className="student-table">
           <thead>
             <tr>
               <th>Last Name</th>
