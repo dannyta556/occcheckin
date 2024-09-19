@@ -1,49 +1,87 @@
 import SearchPage from '../components/SearchPage';
+import { useState, useEffect, useReducer } from 'react';
 import { ListGroup } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import { Button, InputGroup } from 'react-bootstrap';
+import axios from 'axios';
 
-const courseList = [
-  'Math 100',
-  'Math 104',
-  'Math 115',
-  'Math 120',
-  'Math 140',
-  'Math 170',
-  'Math 180',
-  'Math 185',
-  'Math 280',
-  'Math 285',
-];
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return { ...state, courses: action.payload, loading: false };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
 function AddCourseScreen() {
+  const [newCourse, setNewCourse] = useState('');
+
   // useEffect pull courseList on page load and update
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
-  const submitHandler = (e: ButtonEvent) => {
+  const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
-    let exists = false;
-    if (exists) {
-      // show check-in and check-out buttons
+    const response: any = await axios.post(`/api/courses/addCourse`, {
+      name: newCourse,
+    });
+    if (response.data.result === true) {
+      console.log('course added');
+      fetchData();
     } else {
-      // show error
+      console.log('course fail');
     }
   };
-  return (
+  const [{ loading, error, courses }, dispatch] = useReducer(reducer, {
+    courses: [],
+    loading: true,
+    error: '',
+  });
+  const fetchData = async () => {
+    dispatch({ type: 'FETCH_REQUEST' });
+    try {
+      const result = await axios.get(`/api/courses/getCourseList`);
+      dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+    } catch (err) {
+      dispatch({ type: 'FETCH_FAIL', payload: err });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return loading ? (
+    <div>
+      <SearchPage title="Course List" altpage="admin" />
+    </div>
+  ) : error ? (
+    <div>
+      <SearchPage title="Course List" altpage="admin" />
+    </div>
+  ) : (
     <div className="center-box">
       <SearchPage title="Course List" altpage="admin" />
 
       <ListGroup className="center-box border-box">
-        {courseList.map((course) => {
+        {courses.map((course: any) => {
           return (
-            <ListGroup.Item key={course} className="center-text">
-              {course}
+            <ListGroup.Item key={course._id} className="center-text">
+              {course.name}
             </ListGroup.Item>
           );
         })}
       </ListGroup>
       <Form className="pad-top-lg" onSubmit={submitHandler}>
-        <InputGroup className="center-box">
+        <InputGroup
+          className="center-box"
+          onChange={(e) => setNewCourse((e.target as HTMLInputElement).value)}
+        >
           <FormControl
             className="input-box"
             type="text"

@@ -8,10 +8,11 @@ courseRouter.get(
   '/getCourseList',
   expressAsyncHandler(async (req, res) => {
     const courses = await Course.find();
-
-    res.send({
-      courses,
-    });
+    if (courses) {
+      res.send(courses);
+    } else {
+      res.send([]);
+    }
   })
 );
 
@@ -27,7 +28,7 @@ courseRouter.post(
         res.send({ message: 'New Article Created', result: true });
       }
     } catch (e) {
-      res.status(401).send({ message: 'Failed to create a new course' });
+      res.send({ message: 'Failed to create a new course', result: false });
     }
   })
 );

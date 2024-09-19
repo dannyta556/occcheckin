@@ -98,6 +98,19 @@ code {
   font-weight: bold;
   border-radius: 10px;
 }
+.btn-standard:hover {
+  cursor: pointer;
+  filter: brightness(60%);
+}
+.btn-disabled {
+  background-color: gray;
+  color: black;
+  height: 100px;
+  width: 300px;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+}
 .success-text {
   color: green;
   font-size: 24px;

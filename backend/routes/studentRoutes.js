@@ -41,16 +41,17 @@ studentRouter.get(
 studentRouter.post(
   '/addStudent',
   expressAsyncHandler(async (req, res) => {
-    const student = await Student.findOne(req.body.studentID);
+    const student = await Student.findOne({ studentID: req.body.studentID });
     if (student) {
       // student exists, just add new semester to student, update mathlvl
+
       const updateStudent = await Student.findOneAndUpdate(
         {
           studentID: req.body.studentID,
         },
         {
-          $push: {
-            enrolled: req.body.semester,
+          $addToSet: {
+            enrolled: req.body.enrolled,
           },
           mathlvl: req.body.mathlvl,
         }
@@ -63,7 +64,7 @@ studentRouter.post(
     } else {
       // create a new student
       let enrolled = [];
-      enrolled.push(req.body.semester);
+      enrolled.push(req.body.enrolled);
       const newStudent = new Student({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
@@ -71,13 +72,18 @@ studentRouter.post(
         enrolled: enrolled,
         mathlvl: req.body.mathlvl,
       });
+      console.log('Saving new student');
       const saveStudent = await newStudent.save();
       if (saveStudent) {
         res.status(201).send({
           message: `Student: ${req.body.studentID} saved to the database`,
+          success: true,
         });
       } else {
-        res.status(500).send({ message: 'Failed to save student to database' });
+        res.status(500).send({
+          message: 'Failed to save student to database',
+          success: false,
+        });
       }
     }
   })
@@ -96,3 +102,5 @@ studentRouter.put(
     }
   })
 );
+
+export default studentRouter;
