@@ -7,7 +7,7 @@ const studentSchema = new mongoose.Schema(
     studentID: { type: String, required: true },
     enrolled: { type: Array, default: [] },
     mathlvl: { type: String },
-    lastCheckin: { type: Date },
+    lastCheckin: { type: String },
     isCheckedin: { type: Boolean, default: false },
   },
   {

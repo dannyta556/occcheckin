@@ -70,21 +70,6 @@ function AddStudentScreen() {
 
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
-    /*
-    console.log(
-      id +
-        ' ' +
-        firstName +
-        ' ' +
-        lastName +
-        ' ' +
-        level +
-        ' ' +
-        season +
-        ' ' +
-        year
-    );
-    */
     // check if id exists
     const response: any = await axios
       .post('/api/students/addStudent', {
@@ -97,14 +82,22 @@ function AddStudentScreen() {
       .catch((err) => {
         console.log(err);
       });
-    if (response.data.success === true) {
+    if (response.data.delete === true) {
       console.log('Success');
     } else {
       console.log('Fail');
     }
   };
 
-  return (
+  return loading ? (
+    <div>
+      <SearchPage title="ViewStudents" altpage="admin" />
+    </div>
+  ) : error ? (
+    <div>
+      <SearchPage title="ViewStudents" altpage="admin" />
+    </div>
+  ) : (
     <div className="App">
       <SearchPage title="Admin Add Student" altpage="admin" />
       <div className="center-box center-box-container">

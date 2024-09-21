@@ -9,18 +9,27 @@ studentRouter.get(
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
     const semester = query.semester || '';
+    let studentList = [];
+    if (semester == '') {
+      studentList = await Student.find();
+    } else {
+      studentList = await Student.find({ enrolled: semester });
+    }
+    const semesterList = await Student.aggregate([
+      { $unwind: '$enrolled' },
+      { $group: { _id: null, uniqueEnrolled: { $addToSet: '$enrolled' } } },
+      { $project: { _id: 0, uniqueEnrolled: 1 } },
+    ]);
 
-    const semesterFilter = semester && semester !== 'all' ? { semester } : {};
-
-    const studentList = await Student.find({ ...semesterFilter });
-
-    if (studentList) {
+    if (studentList && semesterList) {
       res.send({
-        studentList,
+        studentList: studentList,
+        semesterList: semesterList,
       });
     } else {
       res.send({
         studentList: [],
+        semesterList: semesterList,
       });
     }
   })
@@ -92,8 +101,9 @@ studentRouter.post(
 studentRouter.put(
   '/removeStudent',
   expressAsyncHandler(async (req, res) => {
+    console.log(req.body.studentID);
     const student = await Student.findOneAndDelete({
-      studentID: req.params.studentID,
+      studentID: req.body.studentID,
     });
     if (student) {
       res.send({ delete: true });

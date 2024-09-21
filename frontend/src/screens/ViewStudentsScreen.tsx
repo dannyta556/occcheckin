@@ -2,48 +2,80 @@ import SearchPage from '../components/SearchPage';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
+import { useState, useEffect, useReducer } from 'react';
+import axios from 'axios';
 
-const exampleStudentList = [
-  {
-    LastName: 'Doe',
-    FirstName: 'John',
-    id: 'C012839231',
-    MathLvl: 'Math 185',
-    TotalHrs: '40 hrs 32 min',
-  },
-  {
-    LastName: 'James',
-    FirstName: 'Mary',
-    id: 'C23489134',
-    MathLvl: 'Math 120',
-    TotalHrs: '8 hrs 24 min',
-  },
-  {
-    LastName: 'Korpela',
-    FirstName: 'Jukka',
-    id: 'C21482344',
-    MathLvl: 'Math 170',
-    TotalHrs: '13 hrs 12 min',
-  },
-  {
-    LastName: 'Balan',
-    FirstName: 'Pranav',
-    id: 'C23894135',
-    MathLvl: 'Math 120',
-    TotalHrs: '2 hrs 7 min',
-  },
-];
-
-const semesters = ['Fall 2024', 'Spring 2023', 'Fall 2023'];
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        students: action.payload.studentList,
+        semesters: action.payload.semesterList[0].uniqueEnrolled,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 function ViewStudentsScreen() {
-  return (
+  const [semester, setSemester] = useState('');
+  const [{ loading, error, students, semesters }, dispatch] = useReducer(
+    reducer,
+    {
+      students: [],
+      semesters: [],
+      loading: true,
+      error: '',
+    }
+  );
+
+  type Student = {
+    firstname: string;
+    lastname: string;
+    studentID: string;
+    mathlvl: string;
+    totalHrs: string;
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const result = await axios.get(
+          `/api/students/getStudentList?semester=${semester}`
+        );
+        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+      } catch (err) {
+        dispatch({ type: 'FETCH_FAIL', payload: err });
+      }
+    };
+    fetchData();
+  }, [semester]);
+
+  const handleSemester = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSemester(e.target.value);
+  };
+  return loading ? (
     <div>
+      <SearchPage title="ViewStudents" altpage="admin" />
+    </div>
+  ) : error ? (
+    <div>
+      <SearchPage title="ViewStudents" altpage="admin" />
+    </div>
+  ) : (
+    <>
       <SearchPage title="View Students" altpage="admin" />
       <div className="center-content">
         <div className="table-options">
-          <select name="fall 2024" id="semester">
-            {semesters.map((semester) => {
+          <select id="semester" value={semester} onChange={handleSemester}>
+            <option value={''}>All</option>
+            {semesters.map((semester: string) => {
               return (
                 <option key={semester} value={semester}>
                   {semester}
@@ -65,25 +97,25 @@ function ViewStudentsScreen() {
             </tr>
           </thead>
           <tbody>
-            {exampleStudentList.map((student) => {
+            {students.map((student: Student) => {
               return (
-                <tr key={student.id}>
-                  <td>{student.LastName}</td>
-                  <td>{student.FirstName}</td>
+                <tr key={student.studentID}>
+                  <td>{student.lastname}</td>
+                  <td>{student.firstname}</td>
                   <td>
-                    <Link to={`/admin/student/${student.id}`}>
-                      {student.id}
+                    <Link to={`/admin/student/${student.studentID}`}>
+                      {student.studentID}
                     </Link>
                   </td>
-                  <td>{student.MathLvl}</td>
-                  <td>{student.TotalHrs}</td>
+                  <td>{student.mathlvl}</td>
+                  <td>{0}</td>
                 </tr>
               );
             })}
           </tbody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }
 
