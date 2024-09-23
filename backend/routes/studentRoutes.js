@@ -36,13 +36,15 @@ studentRouter.get(
 );
 
 studentRouter.get(
-  '/getStudent',
+  '/getStudent/:studentID',
   expressAsyncHandler(async (req, res) => {
     const student = await Student.findOne({ studentID: req.params.studentID });
     if (student) {
-      res.send(student);
+      res.send({ student: student, message: 'Student exists', exists: true });
     } else {
-      res.status(404).send({ message: 'Student not found' });
+      res
+        .status(401)
+        .send({ student: {}, message: 'Student not found', exists: false });
     }
   })
 );
@@ -106,9 +108,11 @@ studentRouter.put(
       studentID: req.body.studentID,
     });
     if (student) {
-      res.send({ delete: true });
+      res.send({ delete: true, message: 'Student Deleted' });
     } else {
-      res.send({ delete: false });
+      res
+        .status(401)
+        .send({ delete: false, message: 'StudentID does not exist' });
     }
   })
 );

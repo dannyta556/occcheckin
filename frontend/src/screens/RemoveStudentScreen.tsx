@@ -3,7 +3,9 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import { useState } from 'react';
 import { Button, InputGroup } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import axios from 'axios';
+import { getError } from '../utils';
 function RemoveStudent() {
   const [id, setID] = useState('');
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
@@ -11,15 +13,16 @@ function RemoveStudent() {
     e.preventDefault();
     // check if id exists
     console.log(id);
-    const result = await axios.put('/api/students/removeStudent', {
-      studentID: id,
-    });
-    if (result.data.success === true) {
-      // show check-in and check-out buttons
-      console.log('Success');
-    } else {
-      // show error
-      console.log('Fail');
+    try {
+      await axios
+        .put('/api/students/removeStudent', {
+          studentID: id,
+        })
+        .then((response) => {
+          toast.success(response.data.message);
+        });
+    } catch (err) {
+      toast.error(getError(err));
     }
   };
 

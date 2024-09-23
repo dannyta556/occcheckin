@@ -1,5 +1,6 @@
 import occlogo from '../images/occlogo.png';
 import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 interface altMap {
   [key: string]: string | undefined;
@@ -26,6 +27,7 @@ export default function SearchPage({
       <div>
         <img className="bg-header" src={occlogo} alt="occlogo" />
       </div>
+      <ToastContainer position="bottom-center" limit={1} />
     </div>
   );
 }
