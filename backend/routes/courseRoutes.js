@@ -23,12 +23,18 @@ courseRouter.post(
       name: req.body.name,
     });
     try {
-      let result = await course.save();
+      let result = await course.save({ upsert: true });
       if (result) {
-        res.send({ message: 'New Article Created', result: true });
+        res.send({
+          message: `New Course: "${req.body.name}" Created`,
+          result: true,
+        });
       }
     } catch (e) {
-      res.send({ message: 'Failed to create a new course', result: false });
+      res.send({
+        message: `Course: "${req.body.name}" already exsists`,
+        result: false,
+      });
     }
   })
 );

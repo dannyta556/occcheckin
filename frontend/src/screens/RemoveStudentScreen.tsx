@@ -12,7 +12,6 @@ function RemoveStudent() {
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
-    console.log(id);
     try {
       await axios
         .put('/api/students/removeStudent', {
@@ -24,6 +23,7 @@ function RemoveStudent() {
     } catch (err) {
       toast.error(getError(err));
     }
+    setID('');
   };
 
   return (
@@ -31,7 +31,11 @@ function RemoveStudent() {
       <SearchPage title="Admin Remove Student" altpage="admin" />
 
       <div>
-        <Form className="search-box" onSubmit={submitHandler}>
+        <Form
+          className="search-box"
+          autoComplete="off"
+          onSubmit={submitHandler}
+        >
           <InputGroup>
             <FormControl
               type="text"
@@ -39,6 +43,7 @@ function RemoveStudent() {
               id="q"
               placeholder="Enter Student ID"
               aria-label="Search Student"
+              value={id}
               onChange={(e) => setID((e.target as HTMLInputElement).value)}
             ></FormControl>
             <Button variant="outline-primary" type="submit" id="button-search">

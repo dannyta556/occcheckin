@@ -4,6 +4,8 @@ import { ListGroup } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import { Button, InputGroup } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
 import axios from 'axios';
 
 const reducer = (state: any, action: any) => {
@@ -27,14 +29,17 @@ function AddCourseScreen() {
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
-    const response: any = await axios.post(`/api/courses/addCourse`, {
-      name: newCourse,
-    });
-    if (response.data.result === true) {
-      console.log('course added');
-      fetchData();
-    } else {
-      console.log('course fail');
+    try {
+      await axios
+        .post(`/api/courses/addCourse`, {
+          name: newCourse.charAt(0).toUpperCase() + newCourse.slice(1),
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          fetchData();
+        });
+    } catch (err) {
+      toast.error(getError(err));
     }
   };
   const [{ loading, error, courses }, dispatch] = useReducer(reducer, {
@@ -49,6 +54,7 @@ function AddCourseScreen() {
       dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
     } catch (err) {
       dispatch({ type: 'FETCH_FAIL', payload: err });
+      toast.error(getError(err));
     }
   };
 
@@ -77,7 +83,7 @@ function AddCourseScreen() {
           );
         })}
       </ListGroup>
-      <Form className="pad-top-lg" onSubmit={submitHandler}>
+      <Form className="pad-top-lg" autoComplete="off" onSubmit={submitHandler}>
         <InputGroup
           className="center-box"
           onChange={(e) => setNewCourse((e.target as HTMLInputElement).value)}

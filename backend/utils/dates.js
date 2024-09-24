@@ -11,7 +11,7 @@ export const semesterDates = [
   { name: 'Summer', start: '06/06', end: '08/15' },
 ];
 
-export const getSemester = (dateCheck: string) => {
+export const getSemester = (dateCheck) => {
   var c = dateCheck.split('/');
 
   for (let i = 0; i < semesterDates.length; ++i) {
@@ -30,7 +30,7 @@ export const getSemester = (dateCheck: string) => {
   }
 };
 
-export const getTodayDate = (format: string) => {
+export const getTodayDate = (format) => {
   const today = new Date();
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1;
@@ -51,7 +51,7 @@ export const getTodayTime = () => {
   return time;
 };
 
-export const getTotalHours = (startTime: string, endTime: string) => {
+export const getTotalHours = (startTime, endTime) => {
   let s1 = startTime.split(':');
   let s2 = endTime.split(':');
 
@@ -64,11 +64,7 @@ export const getTotalHours = (startTime: string, endTime: string) => {
   return hours.toString() + ':' + mins.toString();
 };
 
-export const checkValidDate = (
-  dateFrom: string,
-  dateTo: string,
-  dateCheck: string
-) => {
+export const checkValidDate = (dateFrom, dateTo, dateCheck) => {
   var d1 = dateFrom.split('/');
   var d2 = dateTo.split('/');
   var c = dateCheck.split('/');

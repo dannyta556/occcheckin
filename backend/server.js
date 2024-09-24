@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import seedRouter from './routes/seedRoutes.js';
 import courseRouter from './routes/courseRoutes.js';
 import studentRouter from './routes/studentRoutes.js';
+import checkinRouter from './routes/checkinRoutes.js';
 
 dotenv.config();
 
@@ -26,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/courses', courseRouter);
 
 app.use('/api/students', studentRouter);
+
+app.use('/api/checkin', checkinRouter);
 
 app.use('/api/seed', seedRouter);
 

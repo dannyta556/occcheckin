@@ -1,6 +1,7 @@
 import express from 'express';
 import Student from '../models/studentModel.js';
 import expressAsyncHandler from 'express-async-handler';
+import { getYesterday } from '../utils/dates.js';
 
 const studentRouter = express.Router();
 
@@ -52,6 +53,7 @@ studentRouter.get(
 studentRouter.post(
   '/addStudent',
   expressAsyncHandler(async (req, res) => {
+    console.log(req.body.studentID);
     const student = await Student.findOne({ studentID: req.body.studentID });
     if (student) {
       // student exists, just add new semester to student, update mathlvl
@@ -80,6 +82,7 @@ studentRouter.post(
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         studentID: req.body.studentID,
+        lastCheckin: getYesterday(),
         enrolled: enrolled,
         mathlvl: req.body.mathlvl,
       });
@@ -87,12 +90,12 @@ studentRouter.post(
       const saveStudent = await newStudent.save();
       if (saveStudent) {
         res.status(201).send({
-          message: `Student: ${req.body.studentID} saved to the database`,
+          message: `Student: ${req.body.studentID} ${req.body.firstname} ${req.body.lastname} saved to the database`,
           success: true,
         });
       } else {
         res.status(500).send({
-          message: 'Failed to save student to database',
+          message: `Failed to save student ${req.body.studentID} to database.`,
           success: false,
         });
       }
@@ -108,11 +111,15 @@ studentRouter.put(
       studentID: req.body.studentID,
     });
     if (student) {
-      res.send({ delete: true, message: 'Student Deleted' });
+      res.send({
+        delete: true,
+        message: `Student ${req.body.studentID} is deleted.`,
+      });
     } else {
-      res
-        .status(401)
-        .send({ delete: false, message: 'StudentID does not exist' });
+      res.status(401).send({
+        delete: false,
+        message: `StudentID: ${req.body.studentID} does not exist.`,
+      });
     }
   })
 );

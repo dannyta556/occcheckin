@@ -1,11 +1,10 @@
-import { Button, InputGroup, Toast } from 'react-bootstrap';
+import { Button, InputGroup } from 'react-bootstrap';
 import { useState, useReducer, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import SearchPage from '../components/SearchPage';
 import { toast } from 'react-toastify';
 import { getError } from '../utils';
-import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
 
 const reducer = (state: any, action: any) => {
@@ -27,7 +26,6 @@ const reducer = (state: any, action: any) => {
 };
 
 function HomeScreen() {
-  const [noIDFound, setNoIDFound] = useState(false);
   const [idFound, setIdFound] = useState(false);
   const [id, setID] = useState('');
 
@@ -47,12 +45,31 @@ function HomeScreen() {
     e.preventDefault();
     // check if id exists
     dispatch({ type: 'FETCH_REQUEST' });
-    console.log(id);
     try {
       await axios.get(`/api/students/getStudent/${id}`).then((response) => {
         dispatch({ type: 'FETCH_SUCCESS', payload: response.data });
         setIdFound(true);
       });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+
+  const checkinHandler = async (isCheckin: boolean) => {
+    try {
+      if (isCheckin === true) {
+        await axios
+          .post(`/api/checkin/checkin`, { studentID: student.studentID })
+          .then((res) => {
+            toast.success(res.data.message);
+          });
+      } else {
+        await axios
+          .post(`/api/checkin/checkout`, { studentID: student.studentID })
+          .then((res) => {
+            toast.success(res.data.message);
+          });
+      }
     } catch (err) {
       toast.error(getError(err));
     }
@@ -99,8 +116,12 @@ function HomeScreen() {
             <div className="search-result last-item">
               Last Name: {student.lastname}{' '}
             </div>
-            <Button variant="standard">Check-in</Button>
-            <Button variant="standard">Check-out</Button>
+            <Button variant="standard" onClick={() => checkinHandler(true)}>
+              Check-in
+            </Button>
+            <Button variant="standard" onClick={() => checkinHandler(false)}>
+              Check-out
+            </Button>
           </div>
         ) : (
           <></>

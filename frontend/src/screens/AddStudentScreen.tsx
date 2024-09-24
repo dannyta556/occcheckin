@@ -2,6 +2,8 @@ import { useState, useEffect, useReducer } from 'react';
 import SearchPage from '../components/SearchPage';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
 import axios from 'axios';
 
 const reducer = (state: any, action: any) => {
@@ -71,21 +73,31 @@ function AddStudentScreen() {
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
-    const response: any = await axios
-      .post('/api/students/addStudent', {
-        firstname: firstName,
-        lastname: lastName,
-        studentID: id,
-        enrolled: season + ' ' + year,
-        mathlvl: level,
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    if (response.data.delete === true) {
-      console.log('Success');
+    try {
+      await axios
+        .post('/api/students/addStudent', {
+          firstname: firstName,
+          lastname: lastName,
+          studentID: id,
+          enrolled: season + ' ' + year,
+          mathlvl: level,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+        });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+  const checkID = (str: string) => {
+    if (str.length > 0) {
+      if (Array.from(str)[0].toLowerCase() === 'c') {
+        return true;
+      } else {
+        return false;
+      }
     } else {
-      console.log('Fail');
+      return false;
     }
   };
 
@@ -102,7 +114,7 @@ function AddStudentScreen() {
       <SearchPage title="Admin Add Student" altpage="admin" />
       <div className="center-box center-box-container">
         <div className="content">
-          <Form className="" onSubmit={submitHandler}>
+          <Form className="" autoComplete="off" onSubmit={submitHandler}>
             <Form.Group className="mb-3 field-item" controlId="formID">
               <Form.Label>Student ID</Form.Label>
               <Form.Control
@@ -150,11 +162,7 @@ function AddStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formYear">
-              <Form.Select
-                className="dropdown"
-                value={thisYear}
-                onChange={handleYear}
-              >
+              <Form.Select className="dropdown" onChange={handleYear}>
                 {years.map((year) => {
                   return (
                     <option key={year} value={year}>
@@ -165,9 +173,13 @@ function AddStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Button
-              variant={!id || !firstName || !lastName ? 'disabled' : 'standard'}
+              variant={
+                !checkID(id) || !firstName || !lastName
+                  ? 'disabled'
+                  : 'standard'
+              }
               type="submit"
-              disabled={!id || !firstName || !lastName}
+              disabled={!checkID(id) || !id || !firstName || !lastName}
             >
               Submit
             </Button>
