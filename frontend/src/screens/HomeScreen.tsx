@@ -101,7 +101,12 @@ function HomeScreen() {
                 idChangeHandler();
               }}
             ></FormControl>
-            <Button variant="outline-primary" type="submit" id="button-search">
+            <Button
+              variant={'outline-primary'}
+              disabled={!id}
+              type="submit"
+              id="button-search"
+            >
               Continue
             </Button>
           </InputGroup>

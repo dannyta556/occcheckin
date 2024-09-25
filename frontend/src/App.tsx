@@ -23,7 +23,10 @@ function App() {
               <Route path="/success" element={<SuccessScreen />} />
               <Route path="/admin" element={<AdminScreen />} />
               <Route path="/admin/addStudent" element={<AddStudentScreen />} />
-              <Route path="/admin/student/:id" element={<StudentScreen />} />
+              <Route
+                path="/admin/student/:studentID"
+                element={<StudentScreen />}
+              />
               <Route
                 path="/admin/editStudent/:id"
                 element={<EditStudentScreen />}

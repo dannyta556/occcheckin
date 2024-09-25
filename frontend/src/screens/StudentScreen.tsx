@@ -1,6 +1,10 @@
 import SearchPage from '../components/SearchPage';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useReducer, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
+import axios from 'axios';
 
 const exampleInfo = {
   id: 'C012839231',
@@ -25,13 +29,77 @@ const exampleCheckins = [
   },
 ];
 
-function StudentScreen() {
-  return (
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        checkins: action.payload.checkins,
+        studentInfo: action.payload.studentInfo,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+function StudentScreen(props: any) {
+  const params = useParams();
+  const { studentID } = params;
+  let [{ loading, error, checkins, studentInfo }, dispatch] = useReducer(
+    reducer,
+    {
+      checkins: [],
+      studentInfo: {},
+      loading: true,
+      error: '',
+    }
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        await axios
+          .get(`/api/checkin/getStudentInfo/${studentID}`)
+          .then((response) => {
+            dispatch({ type: 'FETCH_SUCCESS', payload: response.data });
+          });
+      } catch (err) {
+        dispatch({ type: 'FETCH_FAIL', payload: err });
+        toast.error(getError(err));
+      }
+    };
+    fetchData();
+  }, [studentID]);
+
+  return loading ? (
+    <div>
+      <SearchPage title="Loading Student" altpage="admin" />
+    </div>
+  ) : error ? (
+    <div>
+      <SearchPage title="Error" altpage="admin" />
+    </div>
+  ) : (
     <div className="center-text center-content">
-      <SearchPage title="Student" altpage="admin" />
+      <SearchPage
+        title={`${studentInfo.firstname} ${studentInfo.lastname}`}
+        altpage="admin"
+      />
       <Link to="/editStudent">Edit Info</Link>
-      <div>ID: {exampleInfo.id}</div>
-      <div>Math Level: {exampleInfo.MathLvl}</div>
+      <div>ID: {studentID}</div>
+      <div>Math Level: {studentInfo.mathlvl}</div>
+      <div>Enrolled</div>
+      <div>
+        {studentInfo.enrolled.map((semester: string) => {
+          return <div>{semester}</div>;
+        })}
+      </div>
 
       <Table className="student-table center-box-container">
         <thead>
@@ -44,13 +112,13 @@ function StudentScreen() {
           </tr>
         </thead>
         <tbody>
-          {exampleCheckins.map((checkin) => {
+          {checkins.map((checkin: any) => {
             return (
-              <tr key={checkin.id}>
+              <tr key={checkin._id}>
                 <td>{checkin.date}</td>
                 <td>{checkin.semester}</td>
-                <td>{checkin.checkin}</td>
-                <td>{checkin.checkout}</td>
+                <td>{checkin.checkin.split(' ')[1]}</td>
+                <td>{checkin.checkout.split(' ')[1]}</td>
                 <td>{checkin.total}</td>
               </tr>
             );

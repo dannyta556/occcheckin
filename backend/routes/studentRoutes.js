@@ -1,5 +1,6 @@
 import express from 'express';
 import Student from '../models/studentModel.js';
+import Checkin from '../models/checkinModel.js';
 import expressAsyncHandler from 'express-async-handler';
 import { getYesterday } from '../utils/dates.js';
 
@@ -22,15 +23,47 @@ studentRouter.get(
       { $project: { _id: 0, uniqueEnrolled: 1 } },
     ]);
 
+    // get Total Hours for each student
+    // loop through list of students
+    let studentTotalHrs = {};
+    if (studentList) {
+      for (let i = 0; i < studentList.length; ++i) {
+        // get all checkins
+        let hours = 0;
+        let mins = 0;
+        let checkins = await Checkin.find({
+          studentID: studentList[i].studentID,
+        });
+
+        if (checkins) {
+          // loop through every checkin and add it's hours and mins
+          for (let j = 0; j < checkins.length; ++j) {
+            hours += parseInt(checkins[j].total.split(':')[0]);
+            mins += parseInt(checkins[j].total.split(':')[1]);
+          }
+          let subHours = Math.floor(mins / 60);
+          let subMins = mins % 60;
+          hours = hours + subHours;
+          mins = subMins;
+        }
+        let totalHrs = hours.toString() + ':' + mins.toString();
+        studentTotalHrs[studentList[i].studentID] = totalHrs;
+      }
+    }
+
     if (studentList && semesterList) {
-      res.send({
+      res.status(201).send({
         studentList: studentList,
         semesterList: semesterList,
+        studentTotalHrs: studentTotalHrs,
+        message: 'Success',
       });
     } else {
-      res.send({
+      res.status(500).send({
         studentList: [],
         semesterList: semesterList,
+        studentTotalHrs: studentTotalHrs,
+        message: 'Error',
       });
     }
   })
@@ -110,10 +143,15 @@ studentRouter.put(
     const student = await Student.findOneAndDelete({
       studentID: req.body.studentID,
     });
-    if (student) {
-      res.send({
+    // remove student's checkins
+    const removeCheckins = await Checkin.deleteMany({
+      studentID: req.body.studentID,
+    });
+
+    if (student && removeCheckins) {
+      res.status(201).send({
         delete: true,
-        message: `Student ${req.body.studentID} is deleted.`,
+        message: `Student ${req.body.studentID} is deleted. All of their checkin data succesfully deleted`,
       });
     } else {
       res.status(401).send({

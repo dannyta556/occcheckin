@@ -1,27 +1,40 @@
 import express from 'express';
 import Checkin from '../models/checkinModel.js';
 import Student from '../models/studentModel.js';
+import {
+  getTodayDate,
+  getTodayTime,
+  getSemester,
+  getTotalHours,
+  checkValidDate,
+} from '../utils/dates.js';
 import expressAsyncHandler from 'express-async-handler';
 
 const checkinRouter = express.Router();
 
 checkinRouter.get(
-  '/getCheckins',
+  '/getStudentInfo/:studentID',
   expressAsyncHandler(async (req, res) => {
-    const { query } = req;
-    const studentID = query.studentID;
+    const checkins = await Checkin.find({ studentID: req.params.studentID });
 
-    const result = await Checkin.find({ studentID: studentID });
-
-    if (result) {
-      res.send({
-        result,
+    const studentInfo = await Student.findOne({
+      studentID: req.params.studentID,
+    });
+    console.log(checkins);
+    console.log(studentInfo);
+    if (checkins && studentInfo) {
+      res.status(201).send({
+        checkins: checkins,
+        studentInfo: studentInfo,
         response: true,
+        message: 'Success',
       });
     } else {
-      res.send({
-        result,
+      res.status(500).send({
+        checkins: [],
+        studentInfo: {},
         response: false,
+        message: 'Error retrieving student info.',
       });
     }
   })
@@ -32,29 +45,41 @@ checkinRouter.get(
 checkinRouter.post(
   '/checkin',
   expressAsyncHandler(async (req, res) => {
-    const thisStudent = await Student.find({ studentID: req.body.studentID });
-    if (thisStudent.isCheckedin === true) {
+    const thisStudent = await Student.findOne({
+      studentID: req.body.studentID,
+    });
+    //console.log(thisStudent);
+    //console.log(thisStudent.studentID);
+    let studentCheckinDate = thisStudent.lastCheckin.split(' ')[0];
+    if (
+      thisStudent.isCheckedin === true &&
+      studentCheckinDate === getTodayDate('/')
+    ) {
       // student already is checked in
-      res.send({ response: false });
+      res.status(500).send({
+        response: false,
+        message: `${thisStudent.firstname} is already checked in.`,
+      });
     } else {
       const todayDate = getTodayDate('/');
       const todayTime = getTodayTime();
-
+      console.log(todayDate);
+      console.log(todayTime);
       const updateStudent = await Student.findOneAndUpdate(
         { studentID: thisStudent.studentID },
         { isCheckedin: true, lastCheckin: todayDate + ' ' + todayTime }
       );
-
+      console.log();
       if (updateStudent) {
         res.send({
           response: true,
           message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
-          ${updateStudent.isCheckedin}`,
+          ${updateStudent.lastCheckin}`,
         });
       } else {
-        res.send({
+        res.status(500).send({
           response: false,
-          message: `Error checking in ${thisStudent.studentID}`,
+          message: `Error checking in ID: ${thisStudent.studentID}`,
         });
       }
     }
@@ -65,34 +90,55 @@ checkinRouter.post(
 checkinRouter.post(
   '/checkout',
   expressAsyncHandler(async (req, res) => {
-    const thisStudent = await Student.find({ studentID: req.body.studentID });
-    const todayDate = getTodayDate('-');
+    const thisStudent = await Student.findOne({
+      studentID: req.body.studentID,
+    });
+    const todayDate = getTodayDate('/');
     let lastCheckin = thisStudent.lastCheckin.split(' ');
-    if (thisStudent.isCheckedin === false || todayDate != lastCheckin[0]) {
-      res.send({ response: false });
+    let currentSemester = getSemester(todayDate);
+    console.log(currentSemester);
+    if (
+      thisStudent.isCheckedin === false ||
+      todayDate !== lastCheckin[0] ||
+      currentSemester === 'none'
+    ) {
+      res.status(500).send({
+        response: false,
+        message:
+          'Student is not checked in or is not checked in during a school semester.',
+      });
     } else {
       const studentID = req.body.studentID;
-      semester = getSemester(getTodayDate('/'));
+
       // split time from thisStudent.lastCheckin
-      const checkin = thisStudent.lastCheckin;
-      const checkout = getTodayTime();
-      const total = getTotalHours(checkin, checkout);
+      let checkin = thisStudent.lastCheckin;
+      let checkinTime = checkin.split(' ')[1];
+      const checkoutTime = getTodayTime();
+      const total = getTotalHours(checkinTime, checkoutTime);
 
       const makeCheckout = new Checkin({
         studentID: studentID,
         date: todayDate,
-        semester: semester,
+        semester: currentSemester,
         checkin: checkin,
-        checkout: checkout,
+        checkout: todayDate + ' ' + checkoutTime,
         total: total,
       });
 
       const saveCheckout = await makeCheckout.save();
       if (saveCheckout) {
-        res.status(201).send({
-          saveCheckout,
-          message: `${saveCheckout.studentID} has checked out at ${saveCheckout.checkout}`,
-        });
+        const updateCheckout = await Student.findOneAndUpdate(
+          { studentID: thisStudent.studentID },
+          {
+            isCheckedin: false,
+          }
+        );
+        if (updateCheckout) {
+          res.status(201).send({
+            saveCheckout,
+            message: `${saveCheckout.studentID} has checked out at ${saveCheckout.checkout}`,
+          });
+        }
       } else {
         res.status(500).send({
           saveCheckout,

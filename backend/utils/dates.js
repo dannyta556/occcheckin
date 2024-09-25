@@ -12,20 +12,27 @@ export const semesterDates = [
 ];
 
 export const getSemester = (dateCheck) => {
-  var c = dateCheck.split('/');
-
+  //var c = dateCheck.split('/');
   for (let i = 0; i < semesterDates.length; ++i) {
     var d1 = semesterDates[i].start.split('/');
     var d2 = semesterDates[i].end.split('/');
-
-    if (
+    /*
       parseInt(c[0]) >= parseInt(d1[0]) &&
       parseInt(c[1]) >= parseInt(d1[1]) &&
       parseInt(c[0]) <= parseInt(d2[0]) &&
       parseInt(c[1]) <= parseInt(d2[0])
+    */
+    let today = new Date();
+    if (
+      new Date(dateCheck) >=
+        new Date(semesterDates[i].start + '/' + today.getFullYear()) &&
+      new Date(dateCheck) <=
+        new Date(semesterDates[i].end + '/' + today.getFullYear())
     ) {
       const today = new Date();
       return semesterDates[i].name + ' ' + today.getFullYear().toString();
+    } else {
+      return 'none';
     }
   }
 };
@@ -35,10 +42,19 @@ export const getTodayDate = (format) => {
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1;
   let dd = today.getDate();
+  console.log(dd);
   let formatDay = '';
   let formatMonth = '';
-  if (dd < 10) formatDay = '0' + dd;
-  if (mm < 10) formatMonth = '0' + mm;
+  if (dd < 10) {
+    formatDay = '0' + dd;
+  } else {
+    formatDay = dd.toString();
+  }
+  if (mm < 10) {
+    formatMonth = '0' + mm;
+  } else {
+    formatMonth = mm.toString();
+  }
 
   const formattedToday = formatMonth + format + formatDay + format + yyyy;
   return formattedToday;
@@ -46,9 +62,15 @@ export const getTodayDate = (format) => {
 
 export const getTodayTime = () => {
   var currentDate = new Date();
-  var time =
-    currentDate.getHours.toString() + ':' + currentDate.getMinutes().toString();
-  return time;
+  let hours =
+    currentDate.getHours() < 10
+      ? '0' + currentDate.getHours().toString()
+      : currentDate.getHours().toString();
+  let mins =
+    currentDate.getMinutes() < 10
+      ? '0' + currentDate.getMinutes().toString()
+      : currentDate.getMinutes().toString();
+  return hours + ':' + mins;
 };
 
 export const getTotalHours = (startTime, endTime) => {

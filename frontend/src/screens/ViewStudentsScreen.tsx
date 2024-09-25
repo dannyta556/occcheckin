@@ -14,6 +14,7 @@ const reducer = (state: any, action: any) => {
         ...state,
         students: action.payload.studentList,
         semesters: action.payload.semesterList[0].uniqueEnrolled,
+        studentTotalHrs: action.payload.studentTotalHrs,
         loading: false,
       };
     case 'FETCH_FAIL':
@@ -25,15 +26,14 @@ const reducer = (state: any, action: any) => {
 
 function ViewStudentsScreen() {
   const [semester, setSemester] = useState('');
-  const [{ loading, error, students, semesters }, dispatch] = useReducer(
-    reducer,
-    {
+  const [{ loading, error, students, semesters, studentTotalHrs }, dispatch] =
+    useReducer(reducer, {
       students: [],
       semesters: [],
+      studentTotalHrs: [],
       loading: true,
       error: '',
-    }
-  );
+    });
 
   type Student = {
     firstname: string;
@@ -50,6 +50,7 @@ function ViewStudentsScreen() {
           `/api/students/getStudentList?semester=${semester}`
         );
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        console.log(result.data);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err });
       }
@@ -108,7 +109,7 @@ function ViewStudentsScreen() {
                     </Link>
                   </td>
                   <td>{student.mathlvl}</td>
-                  <td>{0}</td>
+                  <td>{studentTotalHrs[student.studentID]}</td>
                 </tr>
               );
             })}

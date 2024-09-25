@@ -96,7 +96,12 @@ function AddCourseScreen() {
             placeholder="Enter Course"
             aria-label="Search Student"
           ></FormControl>
-          <Button variant="outline-primary" type="submit" id="button-search">
+          <Button
+            variant="outline-primary"
+            disabled={!newCourse}
+            type="submit"
+            id="button-search"
+          >
             Add
           </Button>
         </InputGroup>
