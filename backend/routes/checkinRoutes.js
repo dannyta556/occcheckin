@@ -20,8 +20,7 @@ checkinRouter.get(
     const studentInfo = await Student.findOne({
       studentID: req.params.studentID,
     });
-    console.log(checkins);
-    console.log(studentInfo);
+
     if (checkins && studentInfo) {
       res.status(201).send({
         checkins: checkins,
@@ -34,7 +33,7 @@ checkinRouter.get(
         checkins: [],
         studentInfo: {},
         response: false,
-        message: 'Error retrieving student info.',
+        message: `Error retrieving student info. Student ID ${req.params.studentID} may not be enrolled. Please contact the professor.`,
       });
     }
   })
@@ -58,13 +57,11 @@ checkinRouter.post(
       // student already is checked in
       res.status(500).send({
         response: false,
-        message: `${thisStudent.firstname} is already checked in.`,
+        message: `${thisStudent.firstname} ${thisStudent.lastname} is already checked in.`,
       });
     } else {
       const todayDate = getTodayDate('/');
       const todayTime = getTodayTime();
-      console.log(todayDate);
-      console.log(todayTime);
       const updateStudent = await Student.findOneAndUpdate(
         { studentID: thisStudent.studentID },
         { isCheckedin: true, lastCheckin: todayDate + ' ' + todayTime }
@@ -74,7 +71,7 @@ checkinRouter.post(
         res.send({
           response: true,
           message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
-          ${updateStudent.lastCheckin}`,
+          ${updateStudent.lastCheckin}.`,
         });
       } else {
         res.status(500).send({

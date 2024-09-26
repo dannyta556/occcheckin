@@ -90,7 +90,7 @@ function AddStudentScreen() {
     }
   };
   const checkID = (str: string) => {
-    if (str.length > 0) {
+    if (str.length === 9) {
       if (Array.from(str)[0].toLowerCase() === 'c') {
         return true;
       } else {
@@ -120,6 +120,7 @@ function AddStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter Student ID"
+                maxLength={9}
                 onChange={(e) => setID((e.target as HTMLInputElement).value)}
               ></Form.Control>
             </Form.Group>

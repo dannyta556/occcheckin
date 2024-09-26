@@ -25,6 +25,18 @@ const reducer = (state: any, action: any) => {
   }
 };
 
+const checkID = (str: string) => {
+  if (str.length === 9) {
+    if (Array.from(str)[0].toLowerCase() === 'c') {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
 function HomeScreen() {
   const [idFound, setIdFound] = useState(false);
   const [id, setID] = useState('');
@@ -96,6 +108,7 @@ function HomeScreen() {
               id="q"
               placeholder="Enter Student ID"
               aria-label="Search Student"
+              maxLength={9}
               onChange={(e) => {
                 setID((e.target as HTMLInputElement).value);
                 idChangeHandler();
@@ -103,7 +116,7 @@ function HomeScreen() {
             ></FormControl>
             <Button
               variant={'outline-primary'}
-              disabled={!id}
+              disabled={!checkID(id)}
               type="submit"
               id="button-search"
             >
