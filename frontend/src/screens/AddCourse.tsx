@@ -85,7 +85,7 @@ function AddCourseScreen() {
       </ListGroup>
       <Form className="pad-top-lg" autoComplete="off" onSubmit={submitHandler}>
         <InputGroup
-          className="center-box"
+          className=""
           onChange={(e) => setNewCourse((e.target as HTMLInputElement).value)}
         >
           <FormControl
