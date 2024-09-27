@@ -71,7 +71,7 @@ checkinRouter.post(
         res.send({
           response: true,
           message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
-          ${updateStudent.lastCheckin}.`,
+          ${todayDate} ${todayTime}.`,
         });
       } else {
         res.status(500).send({

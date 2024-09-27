@@ -99,6 +99,20 @@ code {
   font-weight: bold;
   border-radius: 10px;
 }
+.btn-standard-resize {
+  background-color: var(--occorange);
+  color: black;
+  height: 50px;
+  width: 150px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+.btn-standard-resize:hover {
+  cursor: pointer;
+  filter: brightness(60%);
+}
+
 .btn-standard:hover {
   cursor: pointer;
   filter: brightness(60%);
@@ -112,6 +126,11 @@ code {
   font-weight: bold;
   border-radius: 10px;
 }
+.expand-link {
+  height: 100px;
+  width: 300px;
+}
+
 .success-text {
   color: green;
   font-size: 24px;
@@ -181,4 +200,14 @@ code {
   width: 500px;
   outline: 1px solid black;
   padding: 20px;
+}
+
+.divider {
+  width: 50px;
+  height: auto;
+  display: inline-block;
+}
+
+.large-text {
+  font-size: 24px;
 }

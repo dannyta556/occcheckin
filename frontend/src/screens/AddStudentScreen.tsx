@@ -117,6 +117,7 @@ function AddStudentScreen() {
           <Form className="" autoComplete="off" onSubmit={submitHandler}>
             <Form.Group className="mb-3 field-item" controlId="formID">
               <Form.Label>Student ID</Form.Label>
+              <div className="divider" />
               <Form.Control
                 type="text"
                 placeholder="Enter Student ID"
@@ -126,6 +127,7 @@ function AddStudentScreen() {
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formFirstName">
               <Form.Label>First Name</Form.Label>
+              <div className="divider" />
               <Form.Control
                 type="text"
                 placeholder="Enter First Name"
@@ -136,6 +138,7 @@ function AddStudentScreen() {
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formLastName">
               <Form.Label>Last Name</Form.Label>
+              <div className="divider" />
               <Form.Control
                 type="text"
                 placeholder="Enter Last Name"

@@ -41,16 +41,11 @@ function HomeScreen() {
   const [idFound, setIdFound] = useState(false);
   const [id, setID] = useState('');
 
-  let [{ loading, error, student, exists, message }, dispatch] = useReducer(
-    reducer,
-    {
-      student: {},
-      message: '',
-      exists: false,
-      loading: true,
-      error: '',
-    }
-  );
+  let [{ loading, error, student }, dispatch] = useReducer(reducer, {
+    student: {},
+    loading: true,
+    error: '',
+  });
 
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
   const submitHandler = async (e: ButtonEvent) => {
@@ -134,12 +129,15 @@ function HomeScreen() {
             <div className="search-result last-item">
               Last Name: {student.lastname}{' '}
             </div>
-            <Button variant="standard" onClick={() => checkinHandler(true)}>
-              Check-in
-            </Button>
-            <Button variant="standard" onClick={() => checkinHandler(false)}>
-              Check-out
-            </Button>
+            <div>
+              <Button variant="standard" onClick={() => checkinHandler(true)}>
+                Check-in
+              </Button>
+              <div className="divider" />
+              <Button variant="standard" onClick={() => checkinHandler(false)}>
+                Check-out
+              </Button>
+            </div>
           </div>
         ) : (
           <></>

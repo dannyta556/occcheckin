@@ -28,7 +28,7 @@ function App() {
                 element={<StudentScreen />}
               />
               <Route
-                path="/admin/editStudent/:id"
+                path="/admin/editStudent/:studentID"
                 element={<EditStudentScreen />}
               />
               <Route

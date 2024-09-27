@@ -6,29 +6,6 @@ import { toast } from 'react-toastify';
 import { getError } from '../utils';
 import axios from 'axios';
 
-const exampleInfo = {
-  id: 'C012839231',
-  MathLvl: 'Math 160',
-};
-const exampleCheckins = [
-  {
-    id: 1,
-    date: '08-18-2024',
-    semester: 'Fall 2024',
-    checkin: '08:24',
-    checkout: '12:24',
-    total: '4:00',
-  },
-  {
-    id: 2,
-    date: '08-17-2024',
-    semester: 'Fall 2024',
-    checkin: '13:30',
-    checkout: '16:00',
-    total: '2:30',
-  },
-];
-
 const reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'FETCH_REQUEST':
@@ -47,7 +24,7 @@ const reducer = (state: any, action: any) => {
   }
 };
 
-function StudentScreen(props: any) {
+function StudentScreen() {
   const params = useParams();
   const { studentID } = params;
   let [{ loading, error, checkins, studentInfo }, dispatch] = useReducer(
@@ -91,7 +68,7 @@ function StudentScreen(props: any) {
         title={`${studentInfo.firstname} ${studentInfo.lastname}`}
         altpage="admin"
       />
-      <Link to="/editStudent">Edit Info</Link>
+      <Link to={`/admin/editStudent/${studentInfo.studentID}`}>Edit Info</Link>
       <div>ID: {studentID}</div>
       <div>Math Level: {studentInfo.mathlvl}</div>
       <div>Enrolled</div>
