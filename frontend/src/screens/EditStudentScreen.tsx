@@ -37,6 +37,18 @@ const reducer = (state: any, action: any) => {
   }
 };
 
+const checkID = (str: string) => {
+  if (str.length === 9) {
+    if (Array.from(str)[0].toLowerCase() === 'c') {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
 function EditStudentScreen() {
   const params = useParams();
   const { studentID } = params;
@@ -45,7 +57,7 @@ function EditStudentScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [level, setLevel] = useState('');
-  const [season, setSeason] = useState('');
+  const [season, setSeason] = useState('Spring');
   const [year, setYear] = useState(thisYear.toString());
   const [semesters, setSemesters] = useState([]);
 
@@ -54,28 +66,26 @@ function EditStudentScreen() {
     loading: true,
     error: '',
   });
-
+  const fetchData = async () => {
+    dispatch({ type: 'FETCH_REQUEST' });
+    try {
+      await axios
+        .get(`/api/checkin/getStudentInfo/${studentID}`)
+        .then((response) => {
+          setID(response.data.studentInfo.studentID);
+          setFirstName(response.data.studentInfo.firstname);
+          setLastName(response.data.studentInfo.lastname);
+          setLevel(response.data.studentInfo.mathlvl);
+          setSemesters(response.data.studentInfo.enrolled);
+        });
+      const result = await axios.get(`/api/courses/getCourseList`);
+      dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+    } catch (err) {
+      dispatch({ type: 'FETCH_FAIL', payload: err });
+      toast.error(getError(err));
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      dispatch({ type: 'FETCH_REQUEST' });
-      try {
-        await axios
-          .get(`/api/checkin/getStudentInfo/${studentID}`)
-          .then((response) => {
-            setID(response.data.studentInfo.studentID);
-            setFirstName(response.data.studentInfo.firstname);
-            setLastName(response.data.studentInfo.lastname);
-            setLevel(response.data.studentInfo.mathlvl);
-            setSeason(response.data.studentInfo.setSeason);
-            setSemesters(response.data.studentInfo.enrolled);
-          });
-        const result = await axios.get(`/api/courses/getCourseList`);
-        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
-      } catch (err) {
-        dispatch({ type: 'FETCH_FAIL', payload: err });
-        toast.error(getError(err));
-      }
-    };
     fetchData();
   }, [studentID]);
 
@@ -97,21 +107,31 @@ function EditStudentScreen() {
         .post('/api/students/updateStudent', {
           firstname: firstName,
           lastname: lastName,
-          studentID: id,
+          studentID: studentID,
           mathlvl: level,
+          type: false,
         })
         .then((res) => {
           toast.success(res.data.message);
+          fetchData();
         });
     } catch (err) {
       toast.error(getError(err));
     }
   };
 
-  const addSemesterHandler = async (e: ButtonEvent) => {
-    e.preventDefault();
+  const addSemesterHandler = async () => {
     try {
-      await axios.post('/api/students/addStudent', {});
+      await axios
+        .post('/api/students/updateStudent', {
+          studentID: studentID,
+          enrolled: season + ' ' + year,
+          type: true,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          fetchData();
+        });
     } catch (err) {
       toast.error(getError(err));
     }
@@ -137,6 +157,7 @@ function EditStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter Student ID"
+                readOnly={true}
                 value={id}
                 onChange={(e) => setID((e.target as HTMLInputElement).value)}
                 maxLength={9}
@@ -167,7 +188,11 @@ function EditStudentScreen() {
               />
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formLevel">
-              <Form.Select className="dropdown" onChange={handleMathLevel}>
+              <Form.Select
+                className="dropdown"
+                value={level}
+                onChange={handleMathLevel}
+              >
                 {courses.map((course: any) => {
                   return (
                     <option key={course._id} value={course.name}>
@@ -185,7 +210,11 @@ function EditStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formYear">
-              <Form.Select className="dropdown" onChange={handleYear}>
+              <Form.Select
+                className="dropdown"
+                value={year}
+                onChange={handleYear}
+              >
                 {years.map((year) => {
                   return (
                     <option key={year} value={year}>
@@ -196,7 +225,9 @@ function EditStudentScreen() {
               </Form.Select>
             </Form.Group>
             <div>
-              <Button variant="standard-resize">Add Semester</Button>
+              <Button variant="standard-resize" onClick={addSemesterHandler}>
+                Add Semester
+              </Button>
             </div>
             <div className="border-box center-box">
               <ListGroup>
@@ -210,7 +241,15 @@ function EditStudentScreen() {
               </ListGroup>
             </div>
             <div>
-              <Button variant="standard" type="submit">
+              <Button
+                variant={
+                  !checkID(id) || !firstName || !lastName
+                    ? 'disabled'
+                    : 'standard'
+                }
+                type="submit"
+                disabled={!checkID(id) || !firstName || !lastName}
+              >
                 Submit
               </Button>
               <div className="divider" />

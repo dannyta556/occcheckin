@@ -10,6 +10,7 @@ import AddCourseScreen from './screens/AddCourse';
 import SuccessScreen from './screens/SuccessScreen';
 import StudentScreen from './screens/StudentScreen';
 import EditStudentScreen from './screens/EditStudentScreen';
+import AdminLoginScreen from './screens/AdminLoginScreen';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomeScreen />} />
               <Route path="/success" element={<SuccessScreen />} />
+              <Route path="/login" element={<AdminLoginScreen />} />
               <Route path="/admin" element={<AdminScreen />} />
               <Route path="/admin/addStudent" element={<AddStudentScreen />} />
               <Route

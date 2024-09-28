@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import SearchPage from '../components/SearchPage';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, checkID } from '../utils';
 import axios from 'axios';
 
 const reducer = (state: any, action: any) => {
@@ -22,18 +22,6 @@ const reducer = (state: any, action: any) => {
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
-  }
-};
-
-const checkID = (str: string) => {
-  if (str.length === 9) {
-    if (Array.from(str)[0].toLowerCase() === 'c') {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
   }
 };
 
@@ -89,7 +77,7 @@ function HomeScreen() {
 
   return (
     <div className="App">
-      <SearchPage title="LRNG 051N Student Check-in" altpage="admin" />
+      <SearchPage title="LRNG 051N Student Check-in" altpage="login" />
       <div>
         <Form
           className="search-box"

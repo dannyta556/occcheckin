@@ -3,3 +3,15 @@ export const getError = (error: any) => {
     ? error.response.data.message
     : error.message;
 };
+
+export const checkID = (str: string) => {
+  if (str.length === 9) {
+    if (Array.from(str)[0].toLowerCase() === 'c') {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};

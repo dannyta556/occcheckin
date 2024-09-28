@@ -74,11 +74,9 @@ studentRouter.get(
   expressAsyncHandler(async (req, res) => {
     const student = await Student.findOne({ studentID: req.params.studentID });
     if (student) {
-      res.send({ student: student, message: 'Student exists', exists: true });
+      res.send({ student: student, message: 'Student exists' });
     } else {
-      res
-        .status(401)
-        .send({ student: {}, message: 'Student not found', exists: false });
+      res.status(401).send({ student: {}, message: 'Student not found' });
     }
   })
 );
@@ -86,8 +84,8 @@ studentRouter.get(
 studentRouter.post(
   '/addStudent',
   expressAsyncHandler(async (req, res) => {
-    console.log(req.body.studentID);
     const student = await Student.findOne({ studentID: req.body.studentID });
+    const mathlvl = req.body.mathlvl || student.mathlvl;
     if (student) {
       // student exists, just add new semester to student, update mathlvl
 
@@ -99,13 +97,15 @@ studentRouter.post(
           $addToSet: {
             enrolled: req.body.enrolled,
           },
-          mathlvl: req.body.mathlvl,
+          mathlvl: mathlvl,
         }
       );
       if (updateStudent) {
-        res.send({ message: 'Student is updated', success: true });
+        res.status(201).send({ message: 'Student is updated', success: true });
       } else {
-        res.send({ message: 'Failed to update student', success: false });
+        res
+          .status(500)
+          .send({ message: 'Failed to update student', success: false });
       }
     } else {
       // create a new student
@@ -135,28 +135,108 @@ studentRouter.post(
     }
   })
 );
+studentRouter.post(
+  '/updateStudent',
+  expressAsyncHandler(async (req, res) => {
+    const student = await Student.findOne({ studentID: req.body.studentID });
+    const isAddSemester = req.body.type;
+
+    if (student) {
+      if (isAddSemester) {
+        const updateStudent = await Student.findOneAndUpdate(
+          {
+            studentID: req.body.studentID,
+          },
+          {
+            $addToSet: {
+              enrolled: req.body.enrolled,
+            },
+          }
+        );
+        if (updateStudent) {
+          res
+            .status(201)
+            .send({ message: `Student ${req.body.studentID} is updated.` });
+        } else {
+          res
+            .status(500)
+            .send({ message: `Error updating Student: ${req.body.studentID}` });
+        }
+      } else {
+        const updateStudent = await Student.findOneAndUpdate(
+          {
+            studentID: req.body.studentID,
+          },
+          {
+            studentID: req.body.studentID,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            mathlvl: req.body.mathlvl,
+          }
+        );
+        if (updateStudent) {
+          res
+            .status(201)
+            .send({ message: `Student ${req.body.studentID} is updated.` });
+        } else {
+          res
+            .status(500)
+            .send({ message: `Error updating Student: ${req.body.studentID}` });
+        }
+      }
+    } else {
+      res
+        .status(500)
+        .send({ message: 'Student ID does not exist in database.' });
+    }
+  })
+);
 
 studentRouter.put(
   '/removeStudent',
   expressAsyncHandler(async (req, res) => {
-    console.log(req.body.studentID);
     const student = await Student.findOneAndDelete({
       studentID: req.body.studentID,
     });
     // remove student's checkins
+    /*
     const removeCheckins = await Checkin.deleteMany({
       studentID: req.body.studentID,
     });
+    */
 
-    if (student && removeCheckins) {
+    if (student) {
       res.status(201).send({
         delete: true,
-        message: `Student ${req.body.studentID} is deleted. All of their checkin data succesfully deleted`,
+        message: `Student ${req.body.studentID} is deleted.`,
       });
     } else {
       res.status(401).send({
         delete: false,
         message: `StudentID: ${req.body.studentID} does not exist.`,
+      });
+    }
+  })
+);
+
+studentRouter.put(
+  '/removeSemester',
+  expressAsyncHandler(async (req, res) => {
+    const student = await Student.findOneAndUpdate(
+      {
+        studentID: req.body.studentID,
+      },
+      {
+        $pull: { enrolled: { $in: [req.body.semester] } },
+      }
+    );
+    if (student) {
+      res.status(201).send({
+        message: `Semester ${req.body.semester} is removed.`,
+      });
+    } else {
+      res.status(500).send({
+        message: `Error in removing ${req.body.semester}.`,
       });
     }
   })

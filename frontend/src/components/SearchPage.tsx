@@ -6,6 +6,7 @@ interface altMap {
   [key: string]: string | undefined;
 }
 const altToPage: altMap = {
+  login: '/login',
   admin: '/admin',
   home: '/',
 };
