@@ -153,6 +153,10 @@ code {
 .center-text {
   text-align: center;
 }
+.top-left {
+  margin-top: 25px;
+  margin-left: 25px;
+}
 .center-box-container {
   margin-top: 50px;
 }
@@ -163,7 +167,8 @@ code {
   margin-bottom: 20px;
 }
 .table-options {
-  width: 100%;
+  width: 1400px;
+  margin-bottom: 30px;
 }
 .dropdown {
   width: 200px;
@@ -197,9 +202,13 @@ code {
 .border-box {
   margin-top: 50px;
   margin-bottom: 50px;
+  font-size: 20px;
+
   width: 500px;
-  outline: 1px solid black;
+  background-color: #ffffff;
+  outline: 1px solid #ddd;
   padding: 20px;
+  border-radius: 20px;
 }
 
 .divider {

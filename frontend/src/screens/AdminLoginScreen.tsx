@@ -15,6 +15,7 @@ function AdminLoginScreen() {
     e.preventDefault();
     if (pass !== 'password') {
       toast.error('Incorrect Password');
+      setPass('');
       return;
     }
     navigate(redirect);
@@ -30,8 +31,9 @@ function AdminLoginScreen() {
         >
           <InputGroup>
             <FormControl
-              type="text"
+              type="password"
               placeholder="Enter Password"
+              value={pass}
               onChange={(e) => {
                 setPass((e.target as HTMLInputElement).value);
               }}

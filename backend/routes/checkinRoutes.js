@@ -47,8 +47,7 @@ checkinRouter.post(
     const thisStudent = await Student.findOne({
       studentID: req.body.studentID,
     });
-    //console.log(thisStudent);
-    //console.log(thisStudent.studentID);
+
     let studentCheckinDate = thisStudent.lastCheckin.split(' ')[0];
     if (
       thisStudent.isCheckedin === true &&
@@ -66,7 +65,6 @@ checkinRouter.post(
         { studentID: thisStudent.studentID },
         { isCheckedin: true, lastCheckin: todayDate + ' ' + todayTime }
       );
-      console.log();
       if (updateStudent) {
         res.send({
           response: true,
@@ -93,7 +91,6 @@ checkinRouter.post(
     const todayDate = getTodayDate('/');
     let lastCheckin = thisStudent.lastCheckin.split(' ');
     let currentSemester = getSemester(todayDate);
-    console.log(currentSemester);
     if (
       thisStudent.isCheckedin === false ||
       todayDate !== lastCheckin[0] ||

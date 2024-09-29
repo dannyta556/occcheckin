@@ -46,7 +46,11 @@ studentRouter.get(
           hours = hours + subHours;
           mins = subMins;
         }
-        let totalHrs = hours.toString() + ':' + mins.toString();
+        let formatMins = '';
+        let formatHours = '';
+        formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
+        formatHours = hours < 10 ? '0' + hours.toString() : hours.toString();
+        let totalHrs = formatHours + ':' + formatMins;
         studentTotalHrs[studentList[i].studentID] = totalHrs;
       }
     }
@@ -72,7 +76,10 @@ studentRouter.get(
 studentRouter.get(
   '/getStudent/:studentID',
   expressAsyncHandler(async (req, res) => {
-    const student = await Student.findOne({ studentID: req.params.studentID });
+    let formatID =
+      req.params.studentID.charAt(0).toUpperCase() +
+      req.params.studentID.slice(1);
+    const student = await Student.findOne({ studentID: formatID });
     if (student) {
       res.send({ student: student, message: 'Student exists' });
     } else {
@@ -84,7 +91,9 @@ studentRouter.get(
 studentRouter.post(
   '/addStudent',
   expressAsyncHandler(async (req, res) => {
-    const student = await Student.findOne({ studentID: req.body.studentID });
+    let formatID =
+      req.body.studentID.charAt(0).toUpperCase() + req.body.studentID.slice(1);
+    const student = await Student.findOne({ studentID: formatID });
     const mathlvl = req.body.mathlvl || student.mathlvl;
     if (student) {
       // student exists, just add new semester to student, update mathlvl
@@ -111,15 +120,20 @@ studentRouter.post(
       // create a new student
       let enrolled = [];
       enrolled.push(req.body.enrolled);
+      let formatFN =
+        req.body.firstname.charAt(0).toUpperCase() +
+        req.body.firstname.slice(1);
+      let formatLN =
+        req.body.lastname.charAt(0).toUpperCase() + req.body.lastname.slice(1);
+
       const newStudent = new Student({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        studentID: req.body.studentID,
+        firstname: formatFN,
+        lastname: formatLN,
+        studentID: formatID,
         lastCheckin: getYesterday(),
         enrolled: enrolled,
         mathlvl: req.body.mathlvl,
       });
-      console.log('Saving new student');
       const saveStudent = await newStudent.save();
       if (saveStudent) {
         res.status(201).send({
@@ -138,14 +152,16 @@ studentRouter.post(
 studentRouter.post(
   '/updateStudent',
   expressAsyncHandler(async (req, res) => {
-    const student = await Student.findOne({ studentID: req.body.studentID });
+    let formatID =
+      req.body.studentID.charAt(0).toUpperCase() + req.body.studentID.slice(1);
+    const student = await Student.findOne({ studentID: formatID });
     const isAddSemester = req.body.type;
 
     if (student) {
       if (isAddSemester) {
         const updateStudent = await Student.findOneAndUpdate(
           {
-            studentID: req.body.studentID,
+            studentID: formatID,
           },
           {
             $addToSet: {
@@ -163,25 +179,28 @@ studentRouter.post(
             .send({ message: `Error updating Student: ${req.body.studentID}` });
         }
       } else {
+        let formatFN =
+          req.body.firstname.charAt(0).toUpperCase() +
+          req.body.firstname.slice(1);
+        let formatLN =
+          req.body.lastname.charAt(0).toUpperCase() +
+          req.body.lastname.slice(1);
         const updateStudent = await Student.findOneAndUpdate(
           {
-            studentID: req.body.studentID,
+            studentID: formatID,
           },
           {
-            studentID: req.body.studentID,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
+            firstname: formatFN,
+            lastname: formatLN,
             mathlvl: req.body.mathlvl,
           }
         );
         if (updateStudent) {
-          res
-            .status(201)
-            .send({ message: `Student ${req.body.studentID} is updated.` });
+          res.status(201).send({ message: `Student ${formatID} is updated.` });
         } else {
           res
             .status(500)
-            .send({ message: `Error updating Student: ${req.body.studentID}` });
+            .send({ message: `Error updating Student: ${formatID}` });
         }
       }
     } else {
@@ -195,17 +214,18 @@ studentRouter.post(
 studentRouter.put(
   '/removeStudent',
   expressAsyncHandler(async (req, res) => {
+    let formatID =
+      req.body.studentID.charAt(0).toUpperCase() + req.body.studentID.slice(1);
     const student = await Student.findOneAndDelete({
-      studentID: req.body.studentID,
+      studentID: formatID,
     });
     // remove student's checkins
-    /*
+
     const removeCheckins = await Checkin.deleteMany({
       studentID: req.body.studentID,
     });
-    */
 
-    if (student) {
+    if (student && removeCheckins) {
       res.status(201).send({
         delete: true,
         message: `Student ${req.body.studentID} is deleted.`,
@@ -222,9 +242,11 @@ studentRouter.put(
 studentRouter.put(
   '/removeSemester',
   expressAsyncHandler(async (req, res) => {
+    let formatID =
+      req.body.studentID.charAt(0).toUpperCase() + req.body.studentID.slice(1);
     const student = await Student.findOneAndUpdate(
       {
-        studentID: req.body.studentID,
+        studentID: formatID,
       },
       {
         $pull: { enrolled: { $in: [req.body.semester] } },

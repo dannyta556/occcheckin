@@ -61,6 +61,38 @@ function ViewStudentsScreen() {
   const handleSemester = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSemester(e.target.value);
   };
+
+  const exportStudents = () => {
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    console.log(students);
+    students.forEach(function (rowArray: any) {
+      console.log(rowArray.lastname);
+      let row =
+        rowArray.lastname +
+        ',' +
+        rowArray.firstname +
+        ',' +
+        rowArray.studentID +
+        ',' +
+        rowArray.mathlvl +
+        ',' +
+        studentTotalHrs[rowArray.studentID] +
+        '\r\n';
+      csvContent += row;
+    });
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement('a');
+    if (link.download !== undefined) {
+      link.setAttribute('href', encodedUri);
+      let semesterName = `${semester}` !== '' ? `${semester}` : 'All';
+      link.setAttribute('download', `student_data_${semesterName}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return loading ? (
     <div>
       <SearchPage title="ViewStudents" altpage="admin" />
@@ -74,7 +106,12 @@ function ViewStudentsScreen() {
       <SearchPage title="View Students" altpage="admin" />
       <div className="center-content">
         <div className="table-options">
-          <select id="semester" value={semester} onChange={handleSemester}>
+          <select
+            className="dropdown"
+            id="semester"
+            value={semester}
+            onChange={handleSemester}
+          >
             <option value={''}>All</option>
             {semesters.map((semester: string) => {
               return (
@@ -84,7 +121,12 @@ function ViewStudentsScreen() {
               );
             })}
           </select>
-          <Button className="align-item-right btn-export">Export</Button>
+          <Button
+            className="align-item-right btn-export"
+            onClick={exportStudents}
+          >
+            Export
+          </Button>
         </div>
 
         <Table className="student-table">

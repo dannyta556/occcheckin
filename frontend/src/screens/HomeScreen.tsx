@@ -52,21 +52,22 @@ function HomeScreen() {
 
   const checkinHandler = async (isCheckin: boolean) => {
     try {
-      if (isCheckin === true) {
-        await axios
-          .post(`/api/checkin/checkin`, { studentID: student.studentID })
-          .then((res) => {
-            toast.success(res.data.message);
-          });
+      let res;
+      if (isCheckin) {
+        res = await axios.post(`/api/checkin/checkin`, {
+          studentID: student.studentID,
+        });
       } else {
-        await axios
-          .post(`/api/checkin/checkout`, { studentID: student.studentID })
-          .then((res) => {
-            toast.success(res.data.message);
-          });
+        res = await axios.post(`/api/checkin/checkout`, {
+          studentID: student.studentID,
+        });
       }
+      toast.success(res.data.message);
     } catch (err) {
       toast.error(getError(err));
+    } finally {
+      setID('');
+      setIdFound(false);
     }
   };
 
@@ -80,7 +81,7 @@ function HomeScreen() {
       <SearchPage title="LRNG 051N Student Check-in" altpage="login" />
       <div>
         <Form
-          className="search-box"
+          className="search-box center-box-container"
           autoComplete="off"
           onSubmit={submitHandler}
         >
@@ -92,6 +93,7 @@ function HomeScreen() {
               placeholder="Enter Student ID"
               aria-label="Search Student"
               maxLength={9}
+              value={id}
               onChange={(e) => {
                 setID((e.target as HTMLInputElement).value);
                 idChangeHandler();

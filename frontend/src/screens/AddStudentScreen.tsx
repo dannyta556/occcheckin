@@ -3,7 +3,7 @@ import SearchPage from '../components/SearchPage';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, checkID } from '../utils';
 import axios from 'axios';
 
 const reducer = (state: any, action: any) => {
@@ -87,17 +87,10 @@ function AddStudentScreen() {
         });
     } catch (err) {
       toast.error(getError(err));
-    }
-  };
-  const checkID = (str: string) => {
-    if (str.length === 9) {
-      if (Array.from(str)[0].toLowerCase() === 'c') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+    } finally {
+      setID('');
+      setFirstName('');
+      setLastName('');
     }
   };
 
@@ -122,6 +115,7 @@ function AddStudentScreen() {
                 type="text"
                 placeholder="Enter Student ID"
                 maxLength={9}
+                value={id}
                 onChange={(e) => setID((e.target as HTMLInputElement).value)}
               ></Form.Control>
             </Form.Group>
@@ -131,6 +125,7 @@ function AddStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter First Name"
+                value={firstName}
                 onChange={(e) =>
                   setFirstName((e.target as HTMLInputElement).value)
                 }
@@ -142,6 +137,7 @@ function AddStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter Last Name"
+                value={lastName}
                 onChange={(e) =>
                   setLastName((e.target as HTMLInputElement).value)
                 }
@@ -159,14 +155,22 @@ function AddStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formSemester">
-              <Form.Select className="dropdown" onChange={handleSeason}>
+              <Form.Select
+                className="dropdown"
+                value={season}
+                onChange={handleSeason}
+              >
                 <option>Spring</option>
                 <option>Summer</option>
                 <option>Fall</option>
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formYear">
-              <Form.Select className="dropdown" onChange={handleYear}>
+              <Form.Select
+                className="dropdown"
+                value={year}
+                onChange={handleYear}
+              >
                 {years.map((year) => {
                   return (
                     <option key={year} value={year}>

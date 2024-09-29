@@ -63,7 +63,7 @@ function StudentScreen() {
       <SearchPage title="Error" altpage="admin" />
     </div>
   ) : (
-    <div className="center-text center-content">
+    <div className="center-text">
       <SearchPage
         title={`${studentInfo.firstname} ${studentInfo.lastname}`}
         altpage="admin"
@@ -72,7 +72,7 @@ function StudentScreen() {
       <div>ID: {studentID}</div>
       <div>Math Level: {studentInfo.mathlvl}</div>
       <div>Enrolled</div>
-      <div>
+      <div className="last-item">
         {studentInfo.enrolled.map((semester: string) => {
           return <div>{semester}</div>;
         })}

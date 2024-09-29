@@ -1,7 +1,9 @@
 export function getYesterday() {
   let today = new Date();
   today.setDate(today.getDate() - 1);
-  return today.getDate() + '/' + (today.getMonth() + 1) + '/' + today;
+  return (
+    today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear()
+  );
 }
 
 // Fall, Spring, Summer
@@ -83,7 +85,9 @@ export const getTotalHours = (startTime, endTime) => {
     mins += 60;
     hours -= 1;
   }
-  return hours.toString() + ':' + mins.toString();
+  let formatHrs = hours < 10 ? '0' + hours.toString() : hours.toString();
+  let formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
+  return formatHrs + ':' + formatMins;
 };
 
 export const checkValidDate = (dateFrom, dateTo, dateCheck) => {
