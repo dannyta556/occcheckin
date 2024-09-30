@@ -11,6 +11,7 @@ function AdminLoginScreen() {
   const redirect = '/admin';
   const [pass, setPass] = useState('');
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
+
   const checkPassword = async (e: ButtonEvent) => {
     e.preventDefault();
     if (pass !== 'password') {

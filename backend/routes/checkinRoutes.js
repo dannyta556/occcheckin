@@ -67,13 +67,11 @@ checkinRouter.post(
       );
       if (updateStudent) {
         res.send({
-          response: true,
           message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
           ${todayDate} ${todayTime}.`,
         });
       } else {
         res.status(500).send({
-          response: false,
           message: `Error checking in ID: ${thisStudent.studentID}`,
         });
       }
@@ -97,7 +95,6 @@ checkinRouter.post(
       currentSemester === 'none'
     ) {
       res.status(500).send({
-        response: false,
         message:
           'Student is not checked in or is not checked in during a school semester.',
       });
@@ -129,13 +126,11 @@ checkinRouter.post(
         );
         if (updateCheckout) {
           res.status(201).send({
-            saveCheckout,
             message: `${saveCheckout.studentID} has checked out at ${saveCheckout.checkout}`,
           });
         }
       } else {
         res.status(500).send({
-          saveCheckout,
           message: `Error in checking out ${saveCheckout.studentID}`,
         });
       }

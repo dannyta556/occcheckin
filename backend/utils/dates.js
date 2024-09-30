@@ -14,16 +14,10 @@ export const semesterDates = [
 ];
 
 export const getSemester = (dateCheck) => {
-  //var c = dateCheck.split('/');
   for (let i = 0; i < semesterDates.length; ++i) {
     var d1 = semesterDates[i].start.split('/');
     var d2 = semesterDates[i].end.split('/');
-    /*
-      parseInt(c[0]) >= parseInt(d1[0]) &&
-      parseInt(c[1]) >= parseInt(d1[1]) &&
-      parseInt(c[0]) <= parseInt(d2[0]) &&
-      parseInt(c[1]) <= parseInt(d2[0])
-    */
+
     let today = new Date();
     if (
       new Date(dateCheck) >=
@@ -44,7 +38,6 @@ export const getTodayDate = (format) => {
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1;
   let dd = today.getDate();
-  console.log(dd);
   let formatDay = '';
   let formatMonth = '';
   if (dd < 10) {

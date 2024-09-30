@@ -67,7 +67,7 @@ studentRouter.get(
         studentList: [],
         semesterList: semesterList,
         studentTotalHrs: studentTotalHrs,
-        message: 'Error',
+        message: 'Error in retrieving student list.',
       });
     }
   })
@@ -81,9 +81,11 @@ studentRouter.get(
       req.params.studentID.slice(1);
     const student = await Student.findOne({ studentID: formatID });
     if (student) {
-      res.send({ student: student, message: 'Student exists' });
+      res.send({ student: student, message: `Student ${formatID} exists` });
     } else {
-      res.status(401).send({ student: {}, message: 'Student not found' });
+      res
+        .status(401)
+        .send({ student: {}, message: `Student ${formatID} not found` });
     }
   })
 );
@@ -110,11 +112,11 @@ studentRouter.post(
         }
       );
       if (updateStudent) {
-        res.status(201).send({ message: 'Student is updated', success: true });
+        res.status(201).send({ message: `Student ${formatID} is updated` });
       } else {
-        res
-          .status(500)
-          .send({ message: 'Failed to update student', success: false });
+        res.status(500).send({
+          message: `Failed to update student ${formatID}`,
+        });
       }
     } else {
       // create a new student
@@ -137,13 +139,11 @@ studentRouter.post(
       const saveStudent = await newStudent.save();
       if (saveStudent) {
         res.status(201).send({
-          message: `Student: ${req.body.studentID} ${req.body.firstname} ${req.body.lastname} saved to the database`,
-          success: true,
+          message: `Student: ${req.body.studentID}, ${req.body.firstname} ${req.body.lastname} saved to the database`,
         });
       } else {
         res.status(500).send({
           message: `Failed to save student ${req.body.studentID} to database.`,
-          success: false,
         });
       }
     }
@@ -172,7 +172,7 @@ studentRouter.post(
         if (updateStudent) {
           res
             .status(201)
-            .send({ message: `Student ${req.body.studentID} is updated.` });
+            .send({ message: `Student: ${req.body.studentID} is updated.` });
         } else {
           res
             .status(500)
@@ -204,9 +204,9 @@ studentRouter.post(
         }
       }
     } else {
-      res
-        .status(500)
-        .send({ message: 'Student ID does not exist in database.' });
+      res.status(500).send({
+        message: `Student ID: ${formatID} does not exist in the database.`,
+      });
     }
   })
 );
@@ -222,18 +222,16 @@ studentRouter.put(
     // remove student's checkins
 
     const removeCheckins = await Checkin.deleteMany({
-      studentID: req.body.studentID,
+      studentID: formatID,
     });
 
     if (student && removeCheckins) {
       res.status(201).send({
-        delete: true,
-        message: `Student ${req.body.studentID} is deleted.`,
+        message: `Student ID: ${req.body.studentID} is deleted.`,
       });
     } else {
       res.status(401).send({
-        delete: false,
-        message: `StudentID: ${req.body.studentID} does not exist.`,
+        message: `Student ID: ${req.body.studentID} does not exist.`,
       });
     }
   })

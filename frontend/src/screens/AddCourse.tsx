@@ -7,6 +7,8 @@ import { Button, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getError } from '../utils';
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -65,10 +67,12 @@ function AddCourseScreen() {
   return loading ? (
     <div>
       <SearchPage title="Course List" altpage="admin" />
+      <LoadingBox />
     </div>
   ) : error ? (
     <div>
       <SearchPage title="Course List" altpage="admin" />
+      <MessageBox variant="danger">{error}</MessageBox>
     </div>
   ) : (
     <div className="center-box">

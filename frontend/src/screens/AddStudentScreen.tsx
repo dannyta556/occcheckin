@@ -3,8 +3,10 @@ import SearchPage from '../components/SearchPage';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { getError, checkID } from '../utils';
+import { getError, checkID, setUpYears } from '../utils';
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -21,15 +23,7 @@ const reducer = (state: any, action: any) => {
 
 // Intialize Years
 const thisYear = new Date().getFullYear();
-let years: number[] = [];
-let earlierYears = Array.from(
-  new Array(3),
-  (val, index) => thisYear - index - 1
-);
-earlierYears = earlierYears.reverse();
-let laterYears = Array.from(new Array(5), (val, index) => index + thisYear);
-years.push(...earlierYears);
-years.push(...laterYears);
+const years = setUpYears();
 
 function AddStudentScreen() {
   const [id, setID] = useState('');
@@ -97,10 +91,12 @@ function AddStudentScreen() {
   return loading ? (
     <div>
       <SearchPage title="ViewStudents" altpage="admin" />
+      <LoadingBox />
     </div>
   ) : error ? (
     <div>
       <SearchPage title="ViewStudents" altpage="admin" />
+      <MessageBox variant="danger" />
     </div>
   ) : (
     <div className="App">
@@ -143,7 +139,7 @@ function AddStudentScreen() {
                 }
               />
             </Form.Group>
-            <Form.Group className="mb-3 field-item" controlId="formLevel">
+            <Form.Group className="center-box-container" controlId="formLevel">
               <Form.Select className="dropdown" onChange={handleMathLevel}>
                 {courses.map((course: any) => {
                   return (
@@ -181,6 +177,7 @@ function AddStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Button
+              className="center-box-container"
               variant={
                 !checkID(id) || !firstName || !lastName
                   ? 'disabled'

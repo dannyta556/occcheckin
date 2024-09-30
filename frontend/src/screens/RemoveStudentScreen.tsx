@@ -2,7 +2,7 @@ import SearchPage from '../components/SearchPage';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import { useState, useReducer } from 'react';
-import { Button, InputGroup, ListGroup } from 'react-bootstrap';
+import { Button, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { getError, checkID } from '../utils';
@@ -15,10 +15,9 @@ const reducer = (state: any, action: any) => {
       return {
         ...state,
         student: action.payload.student,
-        loading: false,
       };
     case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
+      return { ...state };
     default:
       return state;
   }
@@ -30,10 +29,8 @@ function RemoveStudent() {
   const [semester, setSemester] = useState('');
   const [enrolled, setEnrolled] = useState([]);
 
-  let [{ loading, error, student }, dispatch] = useReducer(reducer, {
+  let [{ student }, dispatch] = useReducer(reducer, {
     student: {},
-    loading: true,
-    error: '',
   });
 
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
@@ -84,6 +81,7 @@ function RemoveStudent() {
     } catch (err) {
       toast.error(getError(err));
     }
+    setID('');
   };
 
   const idChangeHandler = () => {
@@ -103,7 +101,7 @@ function RemoveStudent() {
           autoComplete="off"
           onSubmit={searchHandler}
         >
-          <InputGroup>
+          <InputGroup className="center-box-container ">
             <FormControl
               type="text"
               name="q"
@@ -111,6 +109,7 @@ function RemoveStudent() {
               placeholder="Enter Student ID"
               aria-label="Search Student"
               value={id}
+              maxLength={9}
               onChange={(e) => {
                 setID((e.target as HTMLInputElement).value);
                 idChangeHandler();
@@ -134,7 +133,7 @@ function RemoveStudent() {
             <div className="search-result">Last Name: {student.lastname}</div>
             <div className="border-box center-box">
               <select value={semester} onChange={handleSemester}>
-                {student.enrolled.map((semester: any) => {
+                {enrolled.map((semester: any) => {
                   return (
                     <option key={semester} className="center-text">
                       {semester}

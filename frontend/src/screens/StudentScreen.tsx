@@ -5,6 +5,8 @@ import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
 import { getError } from '../utils';
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -57,10 +59,12 @@ function StudentScreen() {
   return loading ? (
     <div>
       <SearchPage title="Loading Student" altpage="admin" />
+      <LoadingBox />
     </div>
   ) : error ? (
     <div>
       <SearchPage title="Error" altpage="admin" />
+      <MessageBox variant="danger">{error}</MessageBox>
     </div>
   ) : (
     <div className="center-text">
@@ -74,7 +78,7 @@ function StudentScreen() {
       <div>Enrolled</div>
       <div className="last-item">
         {studentInfo.enrolled.map((semester: string) => {
-          return <div>{semester}</div>;
+          return <div key={semester}>{semester}</div>;
         })}
       </div>
 

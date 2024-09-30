@@ -11,7 +11,7 @@ courseRouter.get(
     if (courses) {
       res.send(courses);
     } else {
-      res.send([]);
+      res.send({ courses: [], message: 'Error in getting course list.' });
     }
   })
 );

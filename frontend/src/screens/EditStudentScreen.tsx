@@ -5,20 +5,14 @@ import { useReducer, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button, ListGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, setUpYears, checkID } from '../utils';
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 // Intialize Years
 const thisYear = new Date().getFullYear();
-let years: number[] = [];
-let earlierYears = Array.from(
-  new Array(3),
-  (val, index) => thisYear - index - 1
-);
-earlierYears = earlierYears.reverse();
-let laterYears = Array.from(new Array(5), (val, index) => index + thisYear);
-years.push(...earlierYears);
-years.push(...laterYears);
+const years = setUpYears();
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -34,18 +28,6 @@ const reducer = (state: any, action: any) => {
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
-  }
-};
-
-const checkID = (str: string) => {
-  if (str.length === 9) {
-    if (Array.from(str)[0].toLowerCase() === 'c') {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
   }
 };
 
@@ -140,10 +122,12 @@ function EditStudentScreen() {
   return loading ? (
     <div>
       <SearchPage title="Loading Student" altpage="admin" />
+      <LoadingBox />
     </div>
   ) : error ? (
     <div>
       <SearchPage title="Error" altpage="admin" />
+      <MessageBox variant="danger">{error}</MessageBox>
     </div>
   ) : (
     <div className="App">
@@ -187,7 +171,7 @@ function EditStudentScreen() {
                 }
               />
             </Form.Group>
-            <Form.Group className="mb-3 field-item" controlId="formLevel">
+            <Form.Group className="center-box-container" controlId="formLevel">
               <Form.Select
                 className="dropdown"
                 value={level}
@@ -254,7 +238,7 @@ function EditStudentScreen() {
               </Button>
               <div className="divider" />
               <a className="large-text" href={`/admin/student/${studentID}`}>
-                Cancel
+                Return
               </a>
             </div>
           </Form>

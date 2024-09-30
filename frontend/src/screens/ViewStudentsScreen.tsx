@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -50,7 +52,6 @@ function ViewStudentsScreen() {
           `/api/students/getStudentList?semester=${semester}`
         );
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
-        console.log(result.data);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err });
       }
@@ -64,9 +65,7 @@ function ViewStudentsScreen() {
 
   const exportStudents = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
-    console.log(students);
     students.forEach(function (rowArray: any) {
-      console.log(rowArray.lastname);
       let row =
         rowArray.lastname +
         ',' +
@@ -96,10 +95,12 @@ function ViewStudentsScreen() {
   return loading ? (
     <div>
       <SearchPage title="ViewStudents" altpage="admin" />
+      <LoadingBox />
     </div>
   ) : error ? (
     <div>
       <SearchPage title="ViewStudents" altpage="admin" />
+      <MessageBox variant="danger">{error}</MessageBox>
     </div>
   ) : (
     <>

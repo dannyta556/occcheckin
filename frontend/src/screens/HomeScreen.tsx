@@ -10,16 +10,15 @@ import axios from 'axios';
 const reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'FETCH_REQUEST':
-      return { ...state, loading: true };
+      return { ...state };
     case 'FETCH_SUCCESS':
       return {
         ...state,
         student: action.payload.student,
         exists: action.payload.exists,
-        loading: false,
       };
     case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
+      return { ...state };
     default:
       return state;
   }
@@ -29,10 +28,8 @@ function HomeScreen() {
   const [idFound, setIdFound] = useState(false);
   const [id, setID] = useState('');
 
-  let [{ loading, error, student }, dispatch] = useReducer(reducer, {
+  let [{ student }, dispatch] = useReducer(reducer, {
     student: {},
-    loading: true,
-    error: '',
   });
 
   type ButtonEvent = React.MouseEvent<HTMLFormElement>;
@@ -46,6 +43,7 @@ function HomeScreen() {
         setIdFound(true);
       });
     } catch (err) {
+      dispatch({ type: 'FETCH_FAIL', payload: err });
       toast.error(getError(err));
     }
   };

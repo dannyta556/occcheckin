@@ -220,3 +220,8 @@ code {
 .large-text {
   font-size: 24px;
 }
+
+.visually-hidden {
+  margin: auto;
+  text-align: center;
+}
