@@ -1,9 +1,13 @@
 export function getYesterday() {
   let today = new Date();
   today.setDate(today.getDate() - 1);
-  return (
-    today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear()
-  );
+  const todayFormatted =
+    (today.getMonth() + 1).toString() +
+    '/' +
+    today.getDate().toString() +
+    '/' +
+    today.getFullYear().toString();
+  return todayFormatted;
 }
 
 // Fall, Spring, Summer

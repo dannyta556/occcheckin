@@ -28,7 +28,12 @@ export default function SearchPage({
       <div>
         <img className="bg-header top-left" src={occlogo} alt="occlogo" />
       </div>
-      <ToastContainer position="bottom-center" limit={1} />
+      <ToastContainer
+        position="bottom-center"
+        theme={'colored'}
+        style={{ width: '500px' }}
+        limit={1}
+      />
     </div>
   );
 }

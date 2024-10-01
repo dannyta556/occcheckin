@@ -47,33 +47,53 @@ checkinRouter.post(
     const thisStudent = await Student.findOne({
       studentID: req.body.studentID,
     });
-
+    if (!thisStudent) {
+      res
+        .status(500)
+        .send({ message: `Student: ${req.body.studentID} not found.` });
+      return;
+    }
     let studentCheckinDate = thisStudent.lastCheckin.split(' ')[0];
-    if (
-      thisStudent.isCheckedin === true &&
-      studentCheckinDate === getTodayDate('/')
-    ) {
-      // student already is checked in
+
+    const thisSemester = getSemester(getTodayDate('/'));
+
+    let isEnrolledThisSemester = false;
+    for (let i = 0; i < thisStudent.enrolled.length; ++i) {
+      if (thisSemester === thisStudent.enrolled[i]) {
+        isEnrolledThisSemester = true;
+      }
+    }
+    if (isEnrolledThisSemester === false) {
       res.status(500).send({
-        response: false,
-        message: `${thisStudent.firstname} ${thisStudent.lastname} is already checked in.`,
+        message: `${thisStudent.firstname} ${thisStudent.lastname} is not enrolled in this semester, please contact the professor.`,
       });
     } else {
-      const todayDate = getTodayDate('/');
-      const todayTime = getTodayTime();
-      const updateStudent = await Student.findOneAndUpdate(
-        { studentID: thisStudent.studentID },
-        { isCheckedin: true, lastCheckin: todayDate + ' ' + todayTime }
-      );
-      if (updateStudent) {
-        res.send({
-          message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
-          ${todayDate} ${todayTime}.`,
+      if (
+        thisStudent.isCheckedin === true &&
+        studentCheckinDate === getTodayDate('/')
+      ) {
+        // student already is checked in
+        res.status(500).send({
+          response: false,
+          message: `${thisStudent.firstname} ${thisStudent.lastname} is already checked in.`,
         });
       } else {
-        res.status(500).send({
-          message: `Error checking in ID: ${thisStudent.studentID}`,
-        });
+        const todayDate = getTodayDate('/');
+        const todayTime = getTodayTime();
+        const updateStudent = await Student.findOneAndUpdate(
+          { studentID: thisStudent.studentID },
+          { isCheckedin: true, lastCheckin: todayDate + ' ' + todayTime }
+        );
+        if (updateStudent) {
+          res.send({
+            message: `${updateStudent.firstname} ${updateStudent.lastname} has checked in at
+          ${todayDate} ${todayTime}.`,
+          });
+        } else {
+          res.status(500).send({
+            message: `Error checking in ID: ${thisStudent.studentID}`,
+          });
+        }
       }
     }
   })
@@ -95,8 +115,7 @@ checkinRouter.post(
       currentSemester === 'none'
     ) {
       res.status(500).send({
-        message:
-          'Student is not checked in or is not checked in during a school semester.',
+        message: `${thisStudent.firstname} ${thisStudent.lastname} is not checked in or is not checked in during a school semester.`,
       });
     } else {
       const studentID = req.body.studentID;
@@ -126,12 +145,12 @@ checkinRouter.post(
         );
         if (updateCheckout) {
           res.status(201).send({
-            message: `${saveCheckout.studentID} has checked out at ${saveCheckout.checkout}`,
+            message: `${updateCheckout.firstname} ${updateCheckout.lastname} has checked out at ${saveCheckout.checkout}`,
           });
         }
       } else {
         res.status(500).send({
-          message: `Error in checking out ${saveCheckout.studentID}`,
+          message: `Error in checking out ${saveCheckout.firstname} ${saveCheckout.lastname} ID : ${saveCheckout.studentID}`,
         });
       }
     }

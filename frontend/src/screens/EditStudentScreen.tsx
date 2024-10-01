@@ -69,6 +69,7 @@ function EditStudentScreen() {
   };
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentID]);
 
   const handleMathLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
