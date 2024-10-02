@@ -65,7 +65,7 @@ function ViewStudentsScreen() {
 
   const exportStudents = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
-    students.forEach(function (rowArray: any) {
+    students.forEach(function (rowArray: Student) {
       let row =
         rowArray.lastname +
         ',' +
@@ -105,8 +105,8 @@ function ViewStudentsScreen() {
   ) : (
     <>
       <SearchPage title="View Students" altpage="admin" />
-      <div className="center-content">
-        <div className="table-options">
+      <div className="">
+        <div className="table-options center-content">
           <select
             className="dropdown"
             id="semester"
@@ -130,7 +130,7 @@ function ViewStudentsScreen() {
           </Button>
         </div>
 
-        <Table className="student-table">
+        <Table className="student-table center-text ">
           <thead>
             <tr>
               <th>Last Name</th>

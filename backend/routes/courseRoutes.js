@@ -31,9 +31,28 @@ courseRouter.post(
         });
       }
     } catch (e) {
-      res.send({
+      res.status(500).send({
         message: `Course: "${req.body.name}" already exsists`,
         result: false,
+      });
+    }
+  })
+);
+
+courseRouter.put(
+  '/deleteCourse',
+  expressAsyncHandler(async (req, res) => {
+    const course = await Course.findOneAndDelete({
+      name: req.body.name,
+    });
+
+    if (course) {
+      res.status(201).send({
+        message: `Course: "${req.body.name}" succesfully removed from the database.`,
+      });
+    } else {
+      res.status(500).send({
+        message: `Error in removing "${req.body.name}".`,
       });
     }
   })

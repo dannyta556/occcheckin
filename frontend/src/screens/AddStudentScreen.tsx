@@ -109,6 +109,7 @@ function AddStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
+                className="form-input"
                 placeholder="Enter Student ID"
                 maxLength={9}
                 value={id}
@@ -120,6 +121,7 @@ function AddStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
+                className="form-input"
                 placeholder="Enter First Name"
                 value={firstName}
                 onChange={(e) =>
@@ -132,6 +134,7 @@ function AddStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
+                className="form-input"
                 placeholder="Enter Last Name"
                 value={lastName}
                 onChange={(e) =>

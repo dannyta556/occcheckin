@@ -19,9 +19,6 @@ export const semesterDates = [
 
 export const getSemester = (dateCheck) => {
   for (let i = 0; i < semesterDates.length; ++i) {
-    var d1 = semesterDates[i].start.split('/');
-    var d2 = semesterDates[i].end.split('/');
-
     let today = new Date();
     if (
       new Date(dateCheck) >=

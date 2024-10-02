@@ -33,6 +33,7 @@ function AdminLoginScreen() {
           <InputGroup>
             <FormControl
               type="password"
+              className="form-search"
               placeholder="Enter Password"
               value={pass}
               onChange={(e) => {

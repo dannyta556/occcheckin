@@ -1,3 +1,9 @@
+export const semesterDates = [
+  { name: 'Fall', start: '08/20', end: '12/20' },
+  { name: 'Spring', start: '01/20', end: '05/27' },
+  { name: 'Summer', start: '06/06', end: '08/15' },
+];
+
 export const getError = (error: any) => {
   return error.response && error.response.data.message
     ? error.response.data.message

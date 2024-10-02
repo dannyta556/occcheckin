@@ -20,17 +20,25 @@ code {
 .search-box {
   height: 100px;
 }
-
+.form-label {
+  font-weight: bold;
+}
 .form-control {
   height: 50px;
   width: 700px;
-  border-radius: 10px 0px 0px 10px;
   border: 1px black;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   padding-left: 50px;
   font-size: 16px;
   display: inline-block;
 }
+.form-search {
+  border-radius: 10px 0px 0px 10px;
+}
+.form-input {
+  border-radius: 10px 10px 10px 10px;
+}
+
 .input-box {
   height: 50px;
   width: 400px;
@@ -210,6 +218,10 @@ code {
   padding: 20px;
   border-radius: 20px;
 }
+.border-item {
+  margin-bottom: 10px;
+  cursor: default;
+}
 
 .divider {
   width: 50px;
@@ -228,4 +240,17 @@ code {
 
 .Toastify__toast-body {
   font-size: 20px;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.delete-btn {
+  margin-left: 20px;
+  display: none;
+}
+.border-item:hover + .delete-btn,
+.delete-btn:hover {
+  display: inline-block;
 }

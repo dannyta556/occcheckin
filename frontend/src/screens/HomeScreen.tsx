@@ -89,6 +89,7 @@ function HomeScreen() {
               name="q"
               id="q"
               placeholder="Enter Student ID"
+              className="form-search"
               aria-label="Search Student"
               maxLength={9}
               value={id}
@@ -100,6 +101,7 @@ function HomeScreen() {
             <Button
               variant={'outline-primary'}
               disabled={!checkID(id)}
+              className="bold-text"
               type="submit"
               id="button-search"
             >
@@ -110,12 +112,17 @@ function HomeScreen() {
 
         {idFound === true ? (
           <div className="center-box">
-            <div className="search-result">ID: {student.studentID}</div>
             <div className="search-result">
-              First Name: {student.firstname}{' '}
+              <span className="bold-text">ID: </span>
+              {student.studentID}
+            </div>
+            <div className="search-result">
+              <span className="bold-text"> First Name: </span>
+              {student.firstname}{' '}
             </div>
             <div className="search-result last-item">
-              Last Name: {student.lastname}{' '}
+              <span className="bold-text">Last Name: </span>
+              {student.lastname}{' '}
             </div>
             <div>
               <Button variant="standard" onClick={() => checkinHandler(true)}>

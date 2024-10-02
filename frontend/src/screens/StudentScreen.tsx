@@ -7,6 +7,7 @@ import { getError } from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import { ObjectId } from 'mongoose';
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -38,6 +39,15 @@ function StudentScreen() {
       error: '',
     }
   );
+
+  type Checkin = {
+    _id: ObjectId;
+    date: string;
+    semester: string;
+    checkin: string;
+    checkout: string;
+    total: string;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,16 +83,26 @@ function StudentScreen() {
         altpage="admin"
       />
       <Link to={`/admin/editStudent/${studentInfo.studentID}`}>Edit Info</Link>
-      <div>ID: {studentID}</div>
-      <div>Math Level: {studentInfo.mathlvl}</div>
-      <div>Enrolled</div>
-      <div className="last-item">
-        {studentInfo.enrolled.map((semester: string) => {
-          return <div key={semester}>{semester}</div>;
-        })}
+      <div className="border-box center-content">
+        <div className="border-item">
+          <span className="bold-text">ID:</span> {studentID}
+        </div>
+        <div className="border-item">
+          <span className="bold-text">Math Level:</span> {studentInfo.mathlvl}
+        </div>
+        <div className="border-item bold-text">Enrolled</div>
+        <div className="last-item">
+          {studentInfo.enrolled.map((semester: string) => {
+            return (
+              <div className="border-item" key={semester}>
+                {semester}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <Table className="student-table center-box-container">
+      <Table className="student-table center-box-container ">
         <thead>
           <tr>
             <th>Date</th>
@@ -93,9 +113,9 @@ function StudentScreen() {
           </tr>
         </thead>
         <tbody>
-          {checkins.map((checkin: any) => {
+          {checkins.map((checkin: Checkin) => {
             return (
-              <tr key={checkin._id}>
+              <tr key={checkin._id.toString()}>
                 <td>{checkin.date}</td>
                 <td>{checkin.semester}</td>
                 <td>{checkin.checkin.split(' ')[1]}</td>

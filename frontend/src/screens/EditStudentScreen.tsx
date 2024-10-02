@@ -120,6 +120,22 @@ function EditStudentScreen() {
     }
   };
 
+  const deleteSemesterHandler = async (semester: string) => {
+    try {
+      await axios
+        .put('/api/students/removeSemester', {
+          studentID: studentID,
+          semester: semester,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          fetchData();
+        });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+
   return loading ? (
     <div>
       <SearchPage title="Loading Student" altpage="admin" />
@@ -142,6 +158,7 @@ function EditStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter Student ID"
+                className="form-input"
                 readOnly={true}
                 value={id}
                 onChange={(e) => setID((e.target as HTMLInputElement).value)}
@@ -153,6 +170,7 @@ function EditStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
+                className="form-input"
                 placeholder="Enter First Name"
                 value={firstName}
                 onChange={(e) =>
@@ -165,6 +183,7 @@ function EditStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
+                className="form-input"
                 placeholder="Enter Last Name"
                 value={lastName}
                 onChange={(e) =>
@@ -214,18 +233,26 @@ function EditStudentScreen() {
                 Add Semester
               </Button>
             </div>
-            <div className="border-box center-box">
-              <ListGroup>
-                {semesters.map((semester) => {
+            <div>
+              <ListGroup className="border-box center-box">
+                {semesters.map((semester, i) => {
                   return (
-                    <ListGroup.Item key={semester} className="center-text">
-                      {semester}
+                    <ListGroup.Item key={semester}>
+                      <span className="center-text border-item">
+                        {semester}
+                      </span>
+                      <button
+                        className="delete-btn"
+                        onClick={() => deleteSemesterHandler(semester)}
+                      >
+                        delete
+                      </button>
                     </ListGroup.Item>
                   );
                 })}
               </ListGroup>
             </div>
-            <div>
+            <div className="last-item">
               <Button
                 variant={
                   !checkID(id) || !firstName || !lastName

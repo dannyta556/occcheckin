@@ -49,6 +49,22 @@ function AddCourseScreen() {
     loading: true,
     error: '',
   });
+
+  const deleteCourseHandler = async (course: string) => {
+    try {
+      await axios
+        .put('/api/courses/deleteCourse', {
+          name: course,
+        })
+        .then((res) => {
+          toast.success(res.data.message);
+          fetchData();
+        });
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+
   const fetchData = async () => {
     dispatch({ type: 'FETCH_REQUEST' });
     try {
@@ -82,7 +98,13 @@ function AddCourseScreen() {
         {courses.map((course: any) => {
           return (
             <ListGroup.Item key={course._id} className="center-text">
-              {course.name}
+              <span className="center-text border-item">{course.name}</span>
+              <button
+                className="delete-btn"
+                onClick={() => deleteCourseHandler(course.name)}
+              >
+                delete
+              </button>
             </ListGroup.Item>
           );
         })}
@@ -93,7 +115,7 @@ function AddCourseScreen() {
           onChange={(e) => setNewCourse((e.target as HTMLInputElement).value)}
         >
           <FormControl
-            className="input-box"
+            className="input-box form-search"
             type="text"
             name="q"
             id="q"
@@ -102,6 +124,7 @@ function AddCourseScreen() {
           ></FormControl>
           <Button
             variant="outline-primary"
+            className="bold-text"
             disabled={!newCourse}
             type="submit"
             id="button-search"

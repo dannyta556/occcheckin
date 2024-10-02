@@ -106,6 +106,7 @@ function RemoveStudent() {
               type="text"
               name="q"
               id="q"
+              className="form-search"
               placeholder="Enter Student ID"
               aria-label="Search Student"
               value={id}
@@ -128,11 +129,25 @@ function RemoveStudent() {
 
         {idFound === true ? (
           <div className="center-box">
-            <div className="search-result">ID: {student.studentID}</div>
-            <div className="search-result">First Name: {student.firstname}</div>
-            <div className="search-result">Last Name: {student.lastname}</div>
+            <div className="search-result">
+              <span className="bold-text">ID: </span>
+              {student.studentID}
+            </div>
+            <div className="search-result">
+              <span className="bold-text">First Name: </span>
+              {student.firstname}
+            </div>
+            <div className="search-result">
+              <span className="bold-text">Last Name: </span>
+              {student.lastname}
+            </div>
             <div className="border-box center-box">
-              <select value={semester} onChange={handleSemester}>
+              <div className="bold-text last-item">Select Semester</div>
+              <select
+                className="dropdown"
+                value={semester}
+                onChange={handleSemester}
+              >
                 {enrolled.map((semester: any) => {
                   return (
                     <option key={semester} className="center-text">
