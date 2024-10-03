@@ -3,35 +3,28 @@ import { Link, useParams } from 'react-router-dom';
 import { useReducer, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import { getError, createReducer } from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { ObjectId } from 'mongoose';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        checkins: action.payload.checkins,
-        studentInfo: action.payload.studentInfo,
-        loading: false,
-      };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
+const studentReducer = createReducer();
+
+type Checkin = {
+  _id: ObjectId;
+  date: string;
+  semester: string;
+  checkin: string;
+  checkout: string;
+  total: string;
 };
 
 function StudentScreen() {
   const params = useParams();
   const { studentID } = params;
   let [{ loading, error, checkins, studentInfo }, dispatch] = useReducer(
-    reducer,
+    studentReducer,
     {
       checkins: [],
       studentInfo: {},
@@ -39,15 +32,6 @@ function StudentScreen() {
       error: '',
     }
   );
-
-  type Checkin = {
-    _id: ObjectId;
-    date: string;
-    semester: string;
-    checkin: string;
-    checkout: string;
-    total: string;
-  };
 
   useEffect(() => {
     const fetchData = async () => {

@@ -5,23 +5,16 @@ import { useState, useReducer } from 'react';
 import { Button, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { getError, checkID } from '../utils';
+import {
+  getError,
+  checkID,
+  ButtonEvent,
+  createReducer,
+  handleChange,
+  handleApiRequest,
+} from '../utils';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        student: action.payload.student,
-      };
-    case 'FETCH_FAIL':
-      return { ...state };
-    default:
-      return state;
-  }
-};
+const removeStudentReducer = createReducer();
 
 function RemoveStudent() {
   const [id, setID] = useState('');
@@ -29,11 +22,9 @@ function RemoveStudent() {
   const [semester, setSemester] = useState('');
   const [enrolled, setEnrolled] = useState([]);
 
-  let [{ student }, dispatch] = useReducer(reducer, {
+  let [{ student }, dispatch] = useReducer(removeStudentReducer, {
     student: {},
   });
-
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
 
   const searchHandler = async (e: ButtonEvent) => {
     e.preventDefault();
@@ -52,35 +43,17 @@ function RemoveStudent() {
 
   const submitHandler = async () => {
     // check if id exists
-    try {
-      await axios
-        .put('/api/students/removeStudent', {
-          studentID: id,
-        })
-        .then((response) => {
-          toast.success(response.data.message);
-        });
-      idChangeHandler();
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest('put', '/api/students/removeStudent', { studentID: id });
+    idChangeHandler();
     setID('');
   };
 
   const removeSemesterHandler = async () => {
-    try {
-      await axios
-        .put('/api/students/removeSemester', {
-          studentID: id,
-          semester: semester,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-        });
-      idChangeHandler();
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest('put', '/api/students/removeSemester', {
+      studentID: id,
+      semester: semester,
+    });
+    idChangeHandler();
     setID('');
   };
 
@@ -88,9 +61,6 @@ function RemoveStudent() {
     setIdFound(false);
   };
 
-  const handleSemester = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSemester(e.target.value);
-  };
   return (
     <div className="App">
       <SearchPage title="Admin Remove Student" altpage="admin" />
@@ -146,7 +116,7 @@ function RemoveStudent() {
               <select
                 className="dropdown"
                 value={semester}
-                onChange={handleSemester}
+                onChange={handleChange(setSemester)}
               >
                 {enrolled.map((semester: any) => {
                   return (

@@ -5,64 +5,45 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import { Button, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { getError } from '../utils';
+import {
+  getError,
+  createReducer,
+  ButtonEvent,
+  handleApiRequest,
+} from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return { ...state, courses: action.payload, loading: false };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
+const addCourseReducer = createReducer();
 
 function AddCourseScreen() {
   const [newCourse, setNewCourse] = useState('');
-
-  // useEffect pull courseList on page load and update
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
-  const submitHandler = async (e: ButtonEvent) => {
-    e.preventDefault();
-    // check if id exists
-    try {
-      await axios
-        .post(`/api/courses/addCourse`, {
-          name: newCourse.charAt(0).toUpperCase() + newCourse.slice(1),
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          fetchData();
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    }
-  };
-  const [{ loading, error, courses }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, courses }, dispatch] = useReducer(addCourseReducer, {
     courses: [],
     loading: true,
     error: '',
   });
 
+  const submitHandler = async (e: ButtonEvent) => {
+    e.preventDefault();
+    // check if id exists
+    handleApiRequest(
+      'post',
+      '/api/courses/addCourse',
+      {
+        name: newCourse.charAt(0).toUpperCase() + newCourse.slice(1),
+      },
+      fetchData
+    );
+  };
   const deleteCourseHandler = async (course: string) => {
-    try {
-      await axios
-        .put('/api/courses/deleteCourse', {
-          name: course,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          fetchData();
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest(
+      'put',
+      '/api/courses/deleteCourse',
+      { name: course },
+      fetchData
+    );
   };
 
   const fetchData = async () => {
@@ -75,7 +56,7 @@ function AddCourseScreen() {
       toast.error(getError(err));
     }
   };
-
+  // useEffect pull courseList on page load and update
   useEffect(() => {
     fetchData();
   }, []);

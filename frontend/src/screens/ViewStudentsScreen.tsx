@@ -3,65 +3,47 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useReducer } from 'react';
+import { createReducer, handleChange } from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        students: action.payload.studentList,
-        semesters: action.payload.semesterList[0].uniqueEnrolled,
-        studentTotalHrs: action.payload.studentTotalHrs,
-        loading: false,
-      };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
+type Student = {
+  firstname: string;
+  lastname: string;
+  studentID: string;
+  mathlvl: string;
+  totalHrs: string;
 };
+
+const viewStudentsReducer = createReducer();
 
 function ViewStudentsScreen() {
   const [semester, setSemester] = useState('');
   const [{ loading, error, students, semesters, studentTotalHrs }, dispatch] =
-    useReducer(reducer, {
+    useReducer(viewStudentsReducer, {
       students: [],
       semesters: [],
-      studentTotalHrs: [],
+      studentTotalHrs: {},
       loading: true,
       error: '',
     });
 
-  type Student = {
-    firstname: string;
-    lastname: string;
-    studentID: string;
-    mathlvl: string;
-    totalHrs: string;
-  };
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
-        const result = await axios.get(
-          `/api/students/getStudentList?semester=${semester}`
-        );
-        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        await axios
+          .get(`/api/students/getStudentList?semester=${semester}`)
+          .then((res) => {
+            dispatch({ type: 'FETCH_SUCCESS', payload: res.data });
+          });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err });
       }
     };
     fetchData();
   }, [semester]);
-
-  const handleSemester = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSemester(e.target.value);
-  };
 
   const exportStudents = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
@@ -111,7 +93,7 @@ function ViewStudentsScreen() {
             className="dropdown"
             id="semester"
             value={semester}
-            onChange={handleSemester}
+            onChange={handleChange(setSemester)}
           >
             <option value={''}>All</option>
             {semesters.map((semester: string) => {
@@ -123,7 +105,7 @@ function ViewStudentsScreen() {
             })}
           </select>
           <Button
-            className="align-item-right btn-export"
+            className="align-item-right btn-export bold-text"
             onClick={exportStudents}
           >
             Export

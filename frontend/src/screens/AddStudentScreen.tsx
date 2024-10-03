@@ -2,24 +2,21 @@ import { useState, useEffect, useReducer } from 'react';
 import SearchPage from '../components/SearchPage';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
+import {
+  getError,
+  checkID,
+  setUpYears,
+  createReducer,
+  handleChange,
+  ButtonEvent,
+  handleApiRequest,
+} from '../utils';
 import { toast } from 'react-toastify';
-import { getError, checkID, setUpYears } from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return { ...state, courses: action.payload, loading: false };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
+const addCourseReducer = createReducer();
 
 // Intialize Years
 const thisYear = new Date().getFullYear();
@@ -33,7 +30,7 @@ function AddStudentScreen() {
   const [season, setSeason] = useState('Spring');
   const [year, setYear] = useState(thisYear.toString());
 
-  const [{ loading, error, courses }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, courses }, dispatch] = useReducer(addCourseReducer, {
     courses: [],
     loading: true,
     error: '',
@@ -45,47 +42,26 @@ function AddStudentScreen() {
       dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
     } catch (err) {
       dispatch({ type: 'FETCH_FAIL', payload: err });
+      toast.error(getError(err));
     }
   };
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleMathLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
-    setLevel(e.target.value);
-  };
-  const handleSeason = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSeason(e.target.value);
-  };
-  const handleYear = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setYear(e.target.value);
-  };
-
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
-
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
-    try {
-      await axios
-        .post('/api/students/addStudent', {
-          firstname: firstName,
-          lastname: lastName,
-          studentID: id,
-          enrolled: season + ' ' + year,
-          mathlvl: level,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    } finally {
-      setID('');
-      setFirstName('');
-      setLastName('');
-    }
+    handleApiRequest('post', '/api/students/addStudent', {
+      firstname: firstName,
+      lastname: lastName,
+      studentID: id,
+      enrolled: season + ' ' + year,
+      mathlvl: level,
+    });
+    setID('');
+    setFirstName('');
+    setLastName('');
   };
 
   return loading ? (
@@ -143,7 +119,10 @@ function AddStudentScreen() {
               />
             </Form.Group>
             <Form.Group className="center-box-container" controlId="formLevel">
-              <Form.Select className="dropdown" onChange={handleMathLevel}>
+              <Form.Select
+                className="dropdown"
+                onChange={handleChange(setLevel)}
+              >
                 {courses.map((course: any) => {
                   return (
                     <option key={course._id} value={course.name}>
@@ -157,7 +136,7 @@ function AddStudentScreen() {
               <Form.Select
                 className="dropdown"
                 value={season}
-                onChange={handleSeason}
+                onChange={handleChange(setSeason)}
               >
                 <option>Spring</option>
                 <option>Summer</option>
@@ -168,7 +147,7 @@ function AddStudentScreen() {
               <Form.Select
                 className="dropdown"
                 value={year}
-                onChange={handleYear}
+                onChange={handleChange(setYear)}
               >
                 {years.map((year) => {
                   return (

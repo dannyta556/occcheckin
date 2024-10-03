@@ -1,38 +1,28 @@
 import { Button, InputGroup } from 'react-bootstrap';
-import { useState, useReducer, useEffect } from 'react';
+import { useState, useReducer } from 'react';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import SearchPage from '../components/SearchPage';
 import { toast } from 'react-toastify';
-import { getError, checkID } from '../utils';
+import {
+  getError,
+  checkID,
+  createReducer,
+  ButtonEvent,
+  handleApiRequest,
+} from '../utils';
 import axios from 'axios';
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        student: action.payload.student,
-        exists: action.payload.exists,
-      };
-    case 'FETCH_FAIL':
-      return { ...state };
-    default:
-      return state;
-  }
-};
+const checkinReducer = createReducer();
 
 function HomeScreen() {
   const [idFound, setIdFound] = useState(false);
   const [id, setID] = useState('');
 
-  let [{ student }, dispatch] = useReducer(reducer, {
+  let [{ student }, dispatch] = useReducer(checkinReducer, {
     student: {},
   });
 
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
     // check if id exists
@@ -49,30 +39,22 @@ function HomeScreen() {
   };
 
   const checkinHandler = async (isCheckin: boolean) => {
-    try {
-      let res;
-      if (isCheckin) {
-        res = await axios.post(`/api/checkin/checkin`, {
-          studentID: student.studentID,
-        });
-      } else {
-        res = await axios.post(`/api/checkin/checkout`, {
-          studentID: student.studentID,
-        });
-      }
-      toast.success(res.data.message);
-    } catch (err) {
-      toast.error(getError(err));
-    } finally {
-      setID('');
-      setIdFound(false);
+    if (isCheckin) {
+      handleApiRequest('post', '/api/checkin/checkin', {
+        studentID: student.studentID,
+      });
+    } else {
+      handleApiRequest('post', '/api/checkin/checkout', {
+        studentID: student.studentID,
+      });
     }
+    setID('');
+    setIdFound(false);
   };
 
   const idChangeHandler = () => {
     setIdFound(false);
   };
-  useEffect(() => {}, [idFound]);
 
   return (
     <div className="App">

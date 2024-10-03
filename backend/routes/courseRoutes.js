@@ -9,9 +9,11 @@ courseRouter.get(
   expressAsyncHandler(async (req, res) => {
     const courses = await Course.find();
     if (courses) {
-      res.send(courses);
+      res.status(201).send({ courses: courses });
     } else {
-      res.send({ courses: [], message: 'Error in getting course list.' });
+      res
+        .status(500)
+        .send({ courses: [], message: 'Error in getting course list.' });
     }
   })
 );

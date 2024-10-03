@@ -5,7 +5,15 @@ import { useReducer, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button, ListGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { getError, setUpYears, checkID } from '../utils';
+import {
+  getError,
+  setUpYears,
+  checkID,
+  createReducer,
+  ButtonEvent,
+  handleChange,
+  handleApiRequest,
+} from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -14,22 +22,7 @@ import MessageBox from '../components/MessageBox';
 const thisYear = new Date().getFullYear();
 const years = setUpYears();
 
-const reducer = (state: any, action: any) => {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        courses: action.payload,
-        loading: false,
-      };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    default:
-      return state;
-  }
-};
+const editStudentReducer = createReducer();
 
 function EditStudentScreen() {
   const params = useParams();
@@ -43,7 +36,7 @@ function EditStudentScreen() {
   const [year, setYear] = useState(thisYear.toString());
   const [semesters, setSemesters] = useState([]);
 
-  let [{ loading, error, courses }, dispatch] = useReducer(reducer, {
+  let [{ loading, error, courses }, dispatch] = useReducer(editStudentReducer, {
     courses: [],
     loading: true,
     error: '',
@@ -72,68 +65,45 @@ function EditStudentScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentID]);
 
-  const handleMathLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLevel(e.target.value);
-  };
-  const handleSeason = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSeason(e.target.value);
-  };
-  const handleYear = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setYear(e.target.value);
-  };
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
-
   const submitHandler = async (e: ButtonEvent) => {
     e.preventDefault();
-    try {
-      await axios
-        .post('/api/students/updateStudent', {
-          firstname: firstName,
-          lastname: lastName,
-          studentID: studentID,
-          mathlvl: level,
-          type: false,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          fetchData();
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest(
+      'post',
+      '/api/students/updateStudent',
+      {
+        firstname: firstName,
+        lastname: lastName,
+        studentID: studentID,
+        mathlvl: level,
+        type: false,
+      },
+      fetchData
+    );
   };
 
   const addSemesterHandler = async () => {
-    try {
-      await axios
-        .post('/api/students/updateStudent', {
-          studentID: studentID,
-          enrolled: season + ' ' + year,
-          type: true,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          fetchData();
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest(
+      'post',
+      '/api/students/updateStudent',
+      {
+        studentID: studentID,
+        enrolled: season + ' ' + year,
+        type: true,
+      },
+      fetchData
+    );
   };
 
   const deleteSemesterHandler = async (semester: string) => {
-    try {
-      await axios
-        .put('/api/students/removeSemester', {
-          studentID: studentID,
-          semester: semester,
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          fetchData();
-        });
-    } catch (err) {
-      toast.error(getError(err));
-    }
+    handleApiRequest(
+      'put',
+      '/api/students/removeSemester',
+      {
+        studentID: studentID,
+        semester: semester,
+      },
+      fetchData
+    );
   };
 
   return loading ? (
@@ -195,7 +165,7 @@ function EditStudentScreen() {
               <Form.Select
                 className="dropdown"
                 value={level}
-                onChange={handleMathLevel}
+                onChange={handleChange(setLevel)}
               >
                 {courses.map((course: any) => {
                   return (
@@ -207,7 +177,10 @@ function EditStudentScreen() {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3 field-item" controlId="formSemester">
-              <Form.Select className="dropdown" onChange={handleSeason}>
+              <Form.Select
+                className="dropdown"
+                onChange={handleChange(setSeason)}
+              >
                 <option>Spring</option>
                 <option>Summer</option>
                 <option>Fall</option>
@@ -217,7 +190,7 @@ function EditStudentScreen() {
               <Form.Select
                 className="dropdown"
                 value={year}
-                onChange={handleYear}
+                onChange={handleChange(setYear)}
               >
                 {years.map((year) => {
                   return (

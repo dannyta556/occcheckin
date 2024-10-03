@@ -93,6 +93,11 @@ code {
   border: 0;
   border-radius: 5px;
 }
+.btn-export:hover {
+  color: white;
+  filter: brightness(85%);
+  cursor: pointer;
+}
 
 .error-message {
   color: red;

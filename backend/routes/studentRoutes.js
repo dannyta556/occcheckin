@@ -54,18 +54,17 @@ studentRouter.get(
         studentTotalHrs[studentList[i].studentID] = totalHrs;
       }
     }
-
     if (studentList && semesterList) {
       res.status(201).send({
-        studentList: studentList,
-        semesterList: semesterList,
+        students: studentList,
+        semesters: semesterList[0].uniqueEnrolled,
         studentTotalHrs: studentTotalHrs,
         message: 'Success',
       });
     } else {
       res.status(500).send({
-        studentList: [],
-        semesterList: semesterList,
+        students: [],
+        semesters: semesterList,
         studentTotalHrs: studentTotalHrs,
         message: 'Error in retrieving student list.',
       });

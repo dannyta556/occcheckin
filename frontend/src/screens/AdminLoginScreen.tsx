@@ -3,6 +3,7 @@ import SearchPage from '../components/SearchPage';
 import { Button, InputGroup } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
+import { ButtonEvent } from '../utils';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -10,7 +11,6 @@ function AdminLoginScreen() {
   const navigate = useNavigate();
   const redirect = '/admin';
   const [pass, setPass] = useState('');
-  type ButtonEvent = React.MouseEvent<HTMLFormElement>;
 
   const checkPassword = async (e: ButtonEvent) => {
     e.preventDefault();

@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 function AdminScreen() {
   return (
-    <div className="App">
+    <div className="center-box">
       <SearchPage title="Admin" altpage="home" />
-      <div className="center-box center-box-container">
+      <div>
         <div className="center-box-container">
           <Link to="/admin/addStudent">
             <Button variant="standard">Add Student</Button>
