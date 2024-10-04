@@ -38,14 +38,17 @@ function RemoveStudent() {
       });
     } catch (err) {
       toast.error(getError(err));
+      setID('');
+      idChangeHandler();
     }
   };
 
   const submitHandler = async () => {
-    // check if id exists
-    handleApiRequest('put', '/api/students/removeStudent', { studentID: id });
-    idChangeHandler();
+    handleApiRequest('put', '/api/students/removeStudent', {
+      studentID: id,
+    });
     setID('');
+    idChangeHandler();
   };
 
   const removeSemesterHandler = async () => {
@@ -76,7 +79,11 @@ function RemoveStudent() {
               type="text"
               name="q"
               id="q"
-              className="form-search"
+              className={
+                id.length === 0 || (id.length > 0 && checkID(id))
+                  ? `form-search`
+                  : 'form-search  form-false'
+              }
               placeholder="Enter Student ID"
               aria-label="Search Student"
               value={id}
@@ -87,7 +94,7 @@ function RemoveStudent() {
               }}
             ></FormControl>
             <Button
-              variant="outline-primary"
+              variant="outline-primary bold-text"
               type="submit"
               id="button-search"
               disabled={!checkID(id)}

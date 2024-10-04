@@ -100,3 +100,17 @@ export const checkValidDate = (dateFrom, dateTo, dateCheck) => {
     return false;
   }
 };
+
+export const sortSemesters = (semesters) => {
+  const seasons = ['Fall', 'Spring', 'Summer'];
+  semesters.sort((a, b) => {
+    const [seasonA, yearA] = a.split(' ');
+    const [seasonB, yearB] = b.split(' ');
+
+    if (yearA !== yearB) {
+      return parseInt(yearA) - parseInt(yearB);
+    }
+    return seasons.indexOf(seasonA) - seasons.indexOf(seasonB);
+  });
+  return semesters;
+};

@@ -14,9 +14,16 @@ export const getError = (error: any) => {
     : error.message;
 };
 
+function isNumeric(value: string) {
+  return /^-?\d+$/.test(value);
+}
+
 export const checkID = (str: string) => {
   if (str.length === 9) {
-    if (Array.from(str)[0].toLowerCase() === 'c') {
+    if (
+      Array.from(str)[0].toLowerCase() === 'c' &&
+      isNumeric(str.substring(1))
+    ) {
       return true;
     } else {
       return false;

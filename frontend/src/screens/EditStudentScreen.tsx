@@ -128,7 +128,11 @@ function EditStudentScreen() {
               <Form.Control
                 type="text"
                 placeholder="Enter Student ID"
-                className="form-input"
+                className={
+                  id.length === 0 || (id.length > 0 && checkID(id))
+                    ? `form-input`
+                    : 'form-input  form-false'
+                }
                 readOnly={true}
                 value={id}
                 onChange={(e) => setID((e.target as HTMLInputElement).value)}

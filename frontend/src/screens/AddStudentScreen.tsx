@@ -85,7 +85,11 @@ function AddStudentScreen() {
               <div className="divider" />
               <Form.Control
                 type="text"
-                className="form-input"
+                className={
+                  id.length === 0 || (id.length > 0 && checkID(id))
+                    ? `form-input`
+                    : 'form-input  form-false'
+                }
                 placeholder="Enter Student ID"
                 maxLength={9}
                 value={id}

@@ -16,7 +16,13 @@ code {
 :root {
   --occorange: #e98a34;
 }
-
+a {
+  color: blue;
+}
+a:visited {
+  text-decoration: none;
+  color: blue;
+}
 .search-box {
   height: 100px;
 }
@@ -26,7 +32,8 @@ code {
 .form-control {
   height: 50px;
   width: 700px;
-  border: 1px black;
+  border: 1px #ddd transparent;
+
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   padding-left: 50px;
   font-size: 16px;
@@ -34,6 +41,9 @@ code {
 }
 .form-search {
   border-radius: 10px 0px 0px 10px;
+}
+.form-false {
+  border: 1px solid red;
 }
 .form-input {
   border-radius: 10px 10px 10px 10px;
@@ -181,6 +191,7 @@ code {
 }
 .table-options {
   width: 1400px;
+
   margin-bottom: 30px;
 }
 .dropdown {
@@ -191,25 +202,43 @@ code {
 .field-item {
   margin: 10px;
 }
-
+.format-table {
+  width: 1500px;
+  height: 300px;
+  overflow: auto;
+}
 .student-table {
   width: 1400px;
-  border: 1px solid;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
   margin: 0 auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 .student-table thead {
+  height: 40px;
+  font-size: 1.2em;
   background-color: var(--occorange);
 }
 .student-table tbody td,
 .student-table tbody th {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px 15px;
 }
 .student-table tbody {
   width: 100%;
 }
+.student-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+.student-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
 .student-table tbody tr:hover {
   background-color: #ddd;
+}
+.student-table tbody tr:last-of-type {
+  border-bottom: 2px solid var(--occorange);
 }
 
 .border-box {

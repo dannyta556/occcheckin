@@ -2,7 +2,7 @@ import express from 'express';
 import Student from '../models/studentModel.js';
 import Checkin from '../models/checkinModel.js';
 import expressAsyncHandler from 'express-async-handler';
-import { getYesterday } from '../utils/dates.js';
+import { getYesterday, sortSemesters } from '../utils/dates.js';
 
 const studentRouter = express.Router();
 
@@ -54,10 +54,11 @@ studentRouter.get(
         studentTotalHrs[studentList[i].studentID] = totalHrs;
       }
     }
+    let sortedSemesters = sortSemesters(semesterList[0].uniqueEnrolled);
     if (studentList && semesterList) {
       res.status(201).send({
         students: studentList,
-        semesters: semesterList[0].uniqueEnrolled,
+        semesters: sortedSemesters,
         studentTotalHrs: studentTotalHrs,
         message: 'Success',
       });
@@ -229,7 +230,7 @@ studentRouter.put(
         message: `Student ID: ${req.body.studentID} is deleted.`,
       });
     } else {
-      res.status(401).send({
+      res.status(500).send({
         message: `Student ID: ${req.body.studentID} does not exist.`,
       });
     }

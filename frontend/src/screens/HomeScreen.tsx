@@ -35,6 +35,8 @@ function HomeScreen() {
     } catch (err) {
       dispatch({ type: 'FETCH_FAIL', payload: err });
       toast.error(getError(err));
+      setID('');
+      setIdFound(false);
     }
   };
 
@@ -71,7 +73,11 @@ function HomeScreen() {
               name="q"
               id="q"
               placeholder="Enter Student ID"
-              className="form-search"
+              className={
+                id.length === 0 || (id.length > 0 && checkID(id))
+                  ? `form-search`
+                  : 'form-search  form-false'
+              }
               aria-label="Search Student"
               maxLength={9}
               value={id}

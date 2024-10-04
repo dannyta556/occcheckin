@@ -87,7 +87,7 @@ function ViewStudentsScreen() {
   ) : (
     <>
       <SearchPage title="View Students" altpage="admin" />
-      <div className="">
+      <div className="last-item">
         <div className="table-options center-content">
           <select
             className="dropdown"
@@ -111,8 +111,7 @@ function ViewStudentsScreen() {
             Export
           </Button>
         </div>
-
-        <Table className="student-table center-text ">
+        <Table className="student-table center-text">
           <thead>
             <tr>
               <th>Last Name</th>
