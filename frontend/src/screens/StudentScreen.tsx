@@ -7,18 +7,8 @@ import { getError, createReducer } from '../utils';
 import axios from 'axios';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { ObjectId } from 'mongoose';
 
 const studentReducer = createReducer();
-
-type Checkin = {
-  _id: ObjectId;
-  date: string;
-  semester: string;
-  checkin: string;
-  checkout: string;
-  total: string;
-};
 
 function StudentScreen() {
   const params = useParams();
@@ -97,7 +87,7 @@ function StudentScreen() {
           </tr>
         </thead>
         <tbody>
-          {checkins.map((checkin: Checkin) => {
+          {checkins.map((checkin: any) => {
             return (
               <tr key={checkin._id.toString()}>
                 <td>{checkin.date}</td>
