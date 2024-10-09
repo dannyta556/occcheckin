@@ -105,7 +105,7 @@ function RemoveStudent() {
         </Form>
 
         {idFound === true ? (
-          <div className="center-box">
+          <div className="center-box popout">
             <div className="search-result">
               <span className="bold-text">ID: </span>
               {student.studentID}

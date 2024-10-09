@@ -26,7 +26,7 @@ function AdminLoginScreen() {
       <SearchPage title="Admin Login" altpage="home" />
       <div>
         <Form
-          className="search-box"
+          className="search-box center-box-container"
           autoComplete="off"
           onSubmit={checkPassword}
         >
@@ -41,6 +41,7 @@ function AdminLoginScreen() {
               }}
             ></FormControl>
             <Button
+              className="bold-text"
               variant={'outline-primary'}
               disabled={!pass}
               type="submit"

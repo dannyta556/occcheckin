@@ -64,6 +64,7 @@ function AddCourseScreen() {
   return loading ? (
     <div>
       <SearchPage title="Course List" altpage="admin" />
+
       <LoadingBox />
     </div>
   ) : error ? (
