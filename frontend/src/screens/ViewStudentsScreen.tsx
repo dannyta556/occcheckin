@@ -47,6 +47,8 @@ function ViewStudentsScreen() {
 
   const exportStudents = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent +=
+      'Last Name, First Name, Student ID, Math Level, Total Hours\r\n';
     students.forEach(function (rowArray: Student) {
       let row =
         rowArray.lastname +
@@ -90,7 +92,7 @@ function ViewStudentsScreen() {
       <div className="last-item">
         <div className="table-options center-content">
           <select
-            className="dropdown"
+            className="dropdown table-option"
             id="semester"
             value={semester}
             onChange={handleChange(setSemester)}
@@ -105,7 +107,7 @@ function ViewStudentsScreen() {
             })}
           </select>
           <Button
-            className="align-item-right btn-export bold-text"
+            className="btn-export bold-text table-option"
             onClick={exportStudents}
           >
             Export

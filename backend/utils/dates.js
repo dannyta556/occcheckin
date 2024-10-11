@@ -114,3 +114,13 @@ export const sortSemesters = (semesters) => {
   });
   return semesters;
 };
+
+export const formatTime = (mins, hours) => {
+  let formatMins = '';
+  let formatHours = '';
+  formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
+  formatHours = hours < 10 ? '0' + hours.toString() : hours.toString();
+  let totalHrs = formatHours + ':' + formatMins;
+
+  return totalHrs;
+};

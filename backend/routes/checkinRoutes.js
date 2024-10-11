@@ -6,7 +6,7 @@ import {
   getTodayTime,
   getSemester,
   getTotalHours,
-  checkValidDate,
+  formatTime,
 } from '../utils/dates.js';
 import expressAsyncHandler from 'express-async-handler';
 
@@ -15,16 +15,40 @@ const checkinRouter = express.Router();
 checkinRouter.get(
   '/getStudentInfo/:studentID',
   expressAsyncHandler(async (req, res) => {
-    const checkins = await Checkin.find({ studentID: req.params.studentID });
+    const { query } = req;
+    const semester = query.semester || '';
+    let checkinList = [];
+    if (semester == '') {
+      checkinList = await Checkin.find({ studentID: req.params.studentID });
+    } else {
+      checkinList = await Checkin.find({
+        studentID: req.params.studentID,
+        semester: semester,
+      });
+    }
+    let hours = 0;
+    let mins = 0;
+    if (checkinList.length > 0) {
+      for (let j = 0; j < checkinList.length; ++j) {
+        hours += parseInt(checkinList[j].total.split(':')[0]);
+        mins += parseInt(checkinList[j].total.split(':')[1]);
+      }
+      let subHours = Math.floor(mins / 60);
+      let subMins = mins % 60;
+      hours = hours + subHours;
+      mins = subMins;
+    }
+    let totalHrs = formatTime(mins, hours);
 
     const studentInfo = await Student.findOne({
       studentID: req.params.studentID,
     });
 
-    if (checkins && studentInfo) {
+    if (checkinList && studentInfo) {
       res.status(201).send({
-        checkins: checkins,
+        checkins: checkinList,
         studentInfo: studentInfo,
+        totalHours: totalHrs,
         response: true,
         message: 'Success',
       });
@@ -32,6 +56,7 @@ checkinRouter.get(
       res.status(500).send({
         checkins: [],
         studentInfo: {},
+        totalHrs: 0,
         response: false,
         message: `Error retrieving student info. Student ID ${req.params.studentID} may not be enrolled. Please contact the professor.`,
       });

@@ -2,7 +2,7 @@ import express from 'express';
 import Student from '../models/studentModel.js';
 import Checkin from '../models/checkinModel.js';
 import expressAsyncHandler from 'express-async-handler';
-import { getYesterday, sortSemesters } from '../utils/dates.js';
+import { getYesterday, sortSemesters, formatTime } from '../utils/dates.js';
 
 const studentRouter = express.Router();
 
@@ -46,12 +46,8 @@ studentRouter.get(
           hours = hours + subHours;
           mins = subMins;
         }
-        let formatMins = '';
-        let formatHours = '';
-        formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
-        formatHours = hours < 10 ? '0' + hours.toString() : hours.toString();
-        let totalHrs = formatHours + ':' + formatMins;
-        studentTotalHrs[studentList[i].studentID] = totalHrs;
+
+        studentTotalHrs[studentList[i].studentID] = formatTime(mins, hours);
       }
     }
     let sortedSemesters = sortSemesters(semesterList[0].uniqueEnrolled);
