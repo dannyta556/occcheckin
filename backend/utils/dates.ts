@@ -17,7 +17,7 @@ export const semesterDates = [
   { name: 'Summer', start: '06/06', end: '08/15' },
 ];
 
-export const getSemester = (dateCheck) => {
+export const getSemester = (dateCheck: string) => {
   for (let i = 0; i < semesterDates.length; ++i) {
     let today = new Date();
     if (
@@ -34,7 +34,7 @@ export const getSemester = (dateCheck) => {
   }
 };
 
-export const getTodayDate = (format) => {
+export const getTodayDate = (format: string) => {
   const today = new Date();
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1;
@@ -51,9 +51,7 @@ export const getTodayDate = (format) => {
   } else {
     formatMonth = mm.toString();
   }
-
-  const formattedToday = formatMonth + format + formatDay + format + yyyy;
-  return formattedToday;
+  return formatMonth + format + formatDay + format + yyyy;
 };
 
 export const getTodayTime = () => {
@@ -69,7 +67,7 @@ export const getTodayTime = () => {
   return hours + ':' + mins;
 };
 
-export const getTotalHours = (startTime, endTime) => {
+export const getTotalHours = (startTime: string, endTime: string) => {
   let s1 = startTime.split(':');
   let s2 = endTime.split(':');
 
@@ -79,12 +77,16 @@ export const getTotalHours = (startTime, endTime) => {
     mins += 60;
     hours -= 1;
   }
-  let formatHrs = hours < 10 ? '0' + hours.toString() : hours.toString();
-  let formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
+  const formatHrs = hours < 10 ? '0' + hours.toString() : hours.toString();
+  const formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
   return formatHrs + ':' + formatMins;
 };
 
-export const checkValidDate = (dateFrom, dateTo, dateCheck) => {
+export const checkValidDate = (
+  dateFrom: string,
+  dateTo: string,
+  dateCheck: string
+) => {
   var d1 = dateFrom.split('/');
   var d2 = dateTo.split('/');
   var c = dateCheck.split('/');
@@ -101,9 +103,9 @@ export const checkValidDate = (dateFrom, dateTo, dateCheck) => {
   }
 };
 
-export const sortSemesters = (semesters) => {
+export const sortSemesters = (semesters: string[]) => {
   const seasons = ['Fall', 'Spring', 'Summer'];
-  semesters.sort((a, b) => {
+  semesters.sort((a: string, b: string) => {
     const [seasonA, yearA] = a.split(' ');
     const [seasonB, yearB] = b.split(' ');
 
@@ -115,12 +117,10 @@ export const sortSemesters = (semesters) => {
   return semesters;
 };
 
-export const formatTime = (mins, hours) => {
-  let formatMins = '';
-  let formatHours = '';
-  formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
-  formatHours = hours < 10 ? '0' + hours.toString() : hours.toString();
-  let totalHrs = formatHours + ':' + formatMins;
+export const formatTime = (mins: number, hours: number) => {
+  const formatMins = mins < 10 ? '0' + mins.toString() : mins.toString();
+  const formatHours = hours < 10 ? '0' + hours.toString() : hours.toString();
+  const totalHrs = formatHours + ':' + formatMins;
 
   return totalHrs;
 };
