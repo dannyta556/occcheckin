@@ -1,17 +1,28 @@
 import express from 'express';
-import Student from '../models/studentModel.js';
-import Checkin from '../models/checkinModel.js';
+import Student from '../models/studentModel.ts';
+import Checkin from '../models/checkinModel.ts';
+import { ICheckin } from './checkinRoutes.ts';
 import expressAsyncHandler from 'express-async-handler';
-import { getYesterday, sortSemesters, formatTime } from '../utils/dates.js';
+import { getYesterday, sortSemesters, formatTime } from '../utils/dates.ts';
 
 const studentRouter = express.Router();
+
+interface IStudent extends Document {
+  firstname: string;
+  lastname: string;
+  studentID: string;
+  enrolled: string;
+  mathlvl: string;
+  lastCheckin: string;
+  isCheckedin: string;
+}
 
 studentRouter.get(
   '/getStudentList',
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
     const semester = query.semester || '';
-    let studentList = [];
+    let studentList: IStudent[] = [];
     if (semester == '') {
       studentList = await Student.find();
     } else {
@@ -31,15 +42,17 @@ studentRouter.get(
         // get all checkins
         let hours = 0;
         let mins = 0;
-        let checkins = await Checkin.find({
+        let checkins: ICheckin[] = await Checkin.find({
           studentID: studentList[i].studentID,
         });
 
         if (checkins) {
           // loop through every checkin and add it's hours and mins
           for (let j = 0; j < checkins.length; ++j) {
-            hours += parseInt(checkins[j].total.split(':')[0]);
-            mins += parseInt(checkins[j].total.split(':')[1]);
+            if (checkins[j].total) {
+              hours += parseInt(checkins[j].total.split(':')[0]);
+              mins += parseInt(checkins[j].total.split(':')[1]);
+            }
           }
           let subHours = Math.floor(mins / 60);
           let subMins = mins % 60;
@@ -92,10 +105,10 @@ studentRouter.post(
     let formatID =
       req.body.studentID.charAt(0).toUpperCase() + req.body.studentID.slice(1);
     const student = await Student.findOne({ studentID: formatID });
-    const mathlvl = req.body.mathlvl || student.mathlvl;
+    let mathlvl = req.body.mathlvl;
     if (student) {
       // student exists, just add new semester to student, update mathlvl
-
+      mathlvl = student.mathlvl;
       const updateStudent = await Student.findOneAndUpdate(
         {
           studentID: req.body.studentID,
@@ -116,7 +129,7 @@ studentRouter.post(
       }
     } else {
       // create a new student
-      let enrolled = [];
+      let enrolled: string[] = [];
       enrolled.push(req.body.enrolled);
       let formatFN =
         req.body.firstname.charAt(0).toUpperCase() +

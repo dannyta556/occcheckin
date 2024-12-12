@@ -1,6 +1,6 @@
 import express from 'express';
-import Checkin from '../models/checkinModel.js';
-import Student from '../models/studentModel.js';
+import Checkin from '../models/checkinModel.ts';
+import Student from '../models/studentModel.ts';
 import {
   getTodayDate,
   getTodayTime,
@@ -12,12 +12,21 @@ import expressAsyncHandler from 'express-async-handler';
 
 const checkinRouter = express.Router();
 
+export interface ICheckin extends Document {
+  studentID: string;
+  date: string;
+  semester: string;
+  checkin: string;
+  checkout: string;
+  total: string;
+}
+
 checkinRouter.get(
   '/getStudentInfo/:studentID',
   expressAsyncHandler(async (req, res) => {
     const { query } = req;
     const semester = query.semester || '';
-    let checkinList = [];
+    let checkinList: ICheckin[] = [];
     if (semester == '') {
       checkinList = await Checkin.find({ studentID: req.params.studentID });
     } else {
@@ -78,7 +87,10 @@ checkinRouter.post(
         .send({ message: `Student: ${req.body.studentID} not found.` });
       return;
     }
-    let studentCheckinDate = thisStudent.lastCheckin.split(' ')[0];
+    let studentCheckinDate = 'undefined';
+    if (thisStudent.lastCheckin) {
+      studentCheckinDate = thisStudent.lastCheckin.split(' ')[0];
+    }
 
     const thisSemester = getSemester(getTodayDate('/'));
 
@@ -131,52 +143,58 @@ checkinRouter.post(
     const thisStudent = await Student.findOne({
       studentID: req.body.studentID,
     });
-    const todayDate = getTodayDate('/');
-    let lastCheckin = thisStudent.lastCheckin.split(' ');
-    let currentSemester = getSemester(todayDate);
-    if (
-      thisStudent.isCheckedin === false ||
-      todayDate !== lastCheckin[0] ||
-      currentSemester === 'none'
-    ) {
-      res.status(500).send({
-        message: `${thisStudent.firstname} ${thisStudent.lastname} is not checked in or is not checked in during a school semester.`,
-      });
-    } else {
-      const studentID = req.body.studentID;
+    if (thisStudent) {
+      let todayDate = getTodayDate('/');
+      let lastCheckin: any = [];
+      if (thisStudent.lastCheckin) {
+        lastCheckin = thisStudent.lastCheckin.split(' ');
+      } else {
+        lastCheckin = [todayDate, '8:00'];
+      }
 
-      // split time from thisStudent.lastCheckin
-      let checkin = thisStudent.lastCheckin;
-      let checkinTime = checkin.split(' ')[1];
-      const checkoutTime = getTodayTime();
-      const total = getTotalHours(checkinTime, checkoutTime);
+      let currentSemester = getSemester(todayDate);
+      if (
+        thisStudent.isCheckedin === false ||
+        todayDate !== lastCheckin[0] ||
+        currentSemester === 'none'
+      ) {
+        res.status(500).send({
+          message: `${thisStudent.firstname} ${thisStudent.lastname} is not checked in or is not checked in during a school semester.`,
+        });
+      } else {
+        const studentID = req.body.studentID;
 
-      const makeCheckout = new Checkin({
-        studentID: studentID,
-        date: todayDate,
-        semester: currentSemester,
-        checkin: checkin,
-        checkout: todayDate + ' ' + checkoutTime,
-        total: total,
-      });
+        // split time from thisStudent.lastCheckin
+        const checkoutTime = getTodayTime();
+        const total = getTotalHours(lastCheckin[1], checkoutTime);
 
-      const saveCheckout = await makeCheckout.save();
-      if (saveCheckout) {
-        const updateCheckout = await Student.findOneAndUpdate(
-          { studentID: thisStudent.studentID },
-          {
-            isCheckedin: false,
+        const makeCheckout = new Checkin({
+          studentID: studentID,
+          date: todayDate,
+          semester: currentSemester,
+          checkin: lastCheckin.join(' '),
+          checkout: todayDate + ' ' + checkoutTime,
+          total: total,
+        });
+
+        const saveCheckout = await makeCheckout.save();
+        if (saveCheckout) {
+          const updateCheckout = await Student.findOneAndUpdate(
+            { studentID: thisStudent.studentID },
+            {
+              isCheckedin: false,
+            }
+          );
+          if (updateCheckout) {
+            res.status(201).send({
+              message: `${updateCheckout.firstname} ${updateCheckout.lastname} has checked out at ${saveCheckout.checkout}`,
+            });
           }
-        );
-        if (updateCheckout) {
-          res.status(201).send({
-            message: `${updateCheckout.firstname} ${updateCheckout.lastname} has checked out at ${saveCheckout.checkout}`,
+        } else {
+          res.status(500).send({
+            message: `Error in checking out ${thisStudent.firstname} ${thisStudent.lastname} ID : ${thisStudent.studentID}`,
           });
         }
-      } else {
-        res.status(500).send({
-          message: `Error in checking out ${saveCheckout.firstname} ${saveCheckout.lastname} ID : ${saveCheckout.studentID}`,
-        });
       }
     }
   })

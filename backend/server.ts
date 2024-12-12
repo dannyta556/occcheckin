@@ -1,16 +1,16 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import seedRouter from './routes/seedRoutes.js';
-import courseRouter from './routes/courseRoutes.js';
-import studentRouter from './routes/studentRoutes.js';
-import checkinRouter from './routes/checkinRoutes.js';
+import seedRouter from './routes/seedRoutes.ts';
+import courseRouter from './routes/courseRoutes.ts';
+import studentRouter from './routes/studentRoutes.ts';
+import checkinRouter from './routes/checkinRoutes.ts';
 
 dotenv.config();
 
 mongoose.set('strictQuery', false);
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI || '')
   .then(() => {
     console.log('connected to mongodb');
   })

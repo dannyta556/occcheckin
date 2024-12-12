@@ -1,5 +1,5 @@
 import express from 'express';
-import Course from '../models/courseModel.js';
+import Course from '../models/courseModel.ts';
 import expressAsyncHandler from 'express-async-handler';
 
 const courseRouter = express.Router();
@@ -25,7 +25,7 @@ courseRouter.post(
       name: req.body.name,
     });
     try {
-      let result = await course.save({ upsert: true });
+      let result = await course.save({});
       if (result) {
         res.send({
           message: `New Course: "${req.body.name}" Created`,
